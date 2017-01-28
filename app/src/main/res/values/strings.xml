@@ -1,0 +1,19 @@
+<resources>
+    <!--create sink activity messages-->
+    <string name="app_name">Duvana - Sumideros</string>
+    <string name="reference.default.message">Referencia</string>
+    <string name="address.default.message">Direccion</string>
+    <string name="type.default.message">Typo</string>
+    <string name="length.default.message">Longitud (ml)</string>
+    <string name="state.default.message">Estado del sumidero</string>
+    <string name="state.good.default.message">Bueno</string>
+    <string name="state.bad.default.message">Malo</string>
+    <string name="state.moderate.default.message">Regular</string>
+    <string name="empty.pipeline.default.message">Tuberia descargada</string>
+    <string name="diameter.default.message">Diametro</string>
+    <string name="observation.default.message">Observaciones</string>
+    <!--main activity message-->
+    <string name="button.add.title">Crear reporte</string>
+    <string name="button.edit.title">Editar reporte</string>
+    <string name="button.send.title">Enviar reporte</string>
+</resources>
