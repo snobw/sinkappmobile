@@ -16,4 +16,5 @@
     <string name="button.add.title">Crear reporte</string>
     <string name="button.edit.title">Editar reporte</string>
     <string name="button.send.title">Enviar reporte</string>
+    <string name="button.exit.title">Salir</string>
 </resources>

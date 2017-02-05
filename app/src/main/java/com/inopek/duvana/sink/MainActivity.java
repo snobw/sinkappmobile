@@ -5,18 +5,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import com.inopek.duvana.sink.activities.SinkCreationActivity;
 import com.inopek.duvana.sink.injectors.Injector;
-import com.inopek.duvana.sink.services.RequirementValidationService;
+import com.inopek.duvana.sink.services.CustomService;
 
 import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
 
     @Inject
-    RequirementValidationService requirementValidationService;
+    CustomService customService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkCamera() {
-        requirementValidationService.checkCameraHardware(getBaseContext());
+        customService.checkCameraHardware(getBaseContext());
     }
 
     private void createSinkIntent() {

@@ -1,7 +1,7 @@
 package com.inopek.duvana.sink.modules;
 
-import com.inopek.duvana.sink.services.RequirementValidationService;
-import com.inopek.duvana.sink.services.impl.RequirementValidationServiceImpl;
+import com.inopek.duvana.sink.services.CustomService;
+import com.inopek.duvana.sink.services.impl.CustomServiceImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -10,8 +10,8 @@ import dagger.Provides;
 public class AppModule {
 
     @Provides
-    RequirementValidationService providesRequirementValidationService() {
-        return new RequirementValidationServiceImpl();
+    CustomService providesRequirementValidationService() {
+        return new CustomServiceImpl();
     }
 
 }

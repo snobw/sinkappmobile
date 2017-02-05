@@ -1,6 +1,7 @@
 package com.inopek.duvana.sink.component;
 
 import com.inopek.duvana.sink.MainActivity;
+import com.inopek.duvana.sink.activities.SinkCreationActivity;
 import com.inopek.duvana.sink.modules.AppModule;
 
 import dagger.Component;
@@ -9,4 +10,6 @@ import dagger.Component;
 public interface AppComponent {
 
     void inject(MainActivity activity);
+
+    void inject(SinkCreationActivity activity);
 }

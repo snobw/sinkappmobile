@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.inopek.duvana.sink">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.location.gps" />
+
     <application
         android:name="com.inopek.duvana.sink.modules.SinkApplication"
         android:allowBackup="true"
@@ -21,13 +31,6 @@
                 <action android:name="android.intent.action.INSERT" />
             </intent-filter>
         </activity>
-        <!--permission-->
-        <uses-permission android:name="android.permission.CAMERA" />
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-        <!--feature-->
-        <uses-feature android:name="android.hardware.camera" />
-        <uses-feature android:name="android.hardware.location.gps" />
     </application>
 
 </manifest>
