@@ -5,10 +5,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.inopek.duvana.sink.R;
@@ -30,15 +28,6 @@ public class PhotoChoiceActivity extends AppCompatActivity implements OnClickLis
         setTheme(R.style.AppTheme_Dialog);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_choice);
-
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
-        params.height = displayMetrics.heightPixels * 30 / 100;
-        params.width = displayMetrics.widthPixels;
-
-        getWindow().setAttributes(params);
 
         cameraButton = (Button) findViewById(R.id.cameraButton);
         galleryButton = (Button) findViewById(R.id.galeryButton);

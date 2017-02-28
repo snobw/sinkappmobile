@@ -1,5 +1,6 @@
 package com.inopek.duvana.sink.component;
 
+import com.inopek.duvana.sink.activities.AbstractCreationActivity;
 import com.inopek.duvana.sink.activities.MainActivity;
 import com.inopek.duvana.sink.activities.SinkBeforeCreationActivity;
 import com.inopek.duvana.sink.activities.SinkCreationActivity;
@@ -18,4 +19,6 @@ public interface AppComponent {
     void inject(SinkSendActivity activity);
 
     void inject(SinkBeforeCreationActivity activity);
+
+    void inject(AbstractCreationActivity activity);
 }

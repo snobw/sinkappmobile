@@ -1,6 +1,9 @@
 <resources>
     <!--create sink activity messages-->
     <string name="app_name">Duvana - Sumideros</string>
+    <string name="camera.default.message">Camara</string>
+    <string name="galery.default.message">Galeria</string>
+    <string name="photo.choice.default.message">Seleccionar desde</string>
     <string name="reference.default.message">Referencia</string>
     <string name="client.default.title">Cliente</string>
     <string name="date.default.title">Fecha</string>
@@ -18,7 +21,6 @@
     <string name="diameter.default.message">Diametro</string>
     <string name="plumb.default.message">Sondeo</string>
     <string name="observation.default.message">Observaciones</string>
-    <!--main activity message-->
     <string name="button.before.add.title">Iniciar reporte</string>
     <string name="button.add.title">Completar reporte</string>
     <string name="button.edit.title">Consultar reporte</string>

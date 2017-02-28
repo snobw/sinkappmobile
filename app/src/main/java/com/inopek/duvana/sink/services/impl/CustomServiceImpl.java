@@ -83,7 +83,9 @@ public class CustomServiceImpl implements CustomService {
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
-                sinkBeans.add(sinkBean);
+                if (sinkBean != null) {
+                    sinkBeans.add(sinkBean);
+                }
                 reader.close();
             }
 

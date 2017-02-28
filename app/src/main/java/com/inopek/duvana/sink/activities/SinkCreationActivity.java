@@ -2,18 +2,15 @@ package com.inopek.duvana.sink.activities;
 
 import android.Manifest.permission;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,46 +31,41 @@ import com.inopek.duvana.sink.enums.SinkDiameterEnum;
 import com.inopek.duvana.sink.enums.SinkPlumbEnum;
 import com.inopek.duvana.sink.enums.SinkStatutEnum;
 import com.inopek.duvana.sink.enums.SinkTypeEnum;
-import com.inopek.duvana.sink.injectors.Injector;
-import com.inopek.duvana.sink.services.CustomService;
 import com.inopek.duvana.sink.tasks.HttpRequestSaveTask;
 import com.inopek.duvana.sink.utils.AddressUtils;
-import com.inopek.duvana.sink.utils.ImageUtils;
 
 import java.util.Arrays;
 import java.util.Date;
-
-import javax.inject.Inject;
 
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initDiameterSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initPlumbSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initStateSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initTypeSpinner;
-import static com.inopek.duvana.sink.constants.SinkConstants.PHOTO_REQUEST_CODE;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.hasText;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.isNumeric;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.isValidSpinner;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.photoExists;
 
-public class SinkCreationActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class SinkCreationActivity extends AbstractCreationActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
-    @Inject
-    CustomService customService;
-
-    private ImageView imageViewAfter;
     private GoogleApiClient mGoogleApiClient;
     private Location lastLocation;
     private LocationRequest mLocationRequest;
-    private LocationManager locationManager;
     private AddressBean addressBean;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initialize();
-        // inject dependecies
-        Injector.getInstance().getAppComponent().inject(this);
 
+    @Override
+    protected void customInitialize() {
+        setContentView(R.layout.activity_sink_creation);
+        addCameraButtonListener((Button) findViewById(R.id.cameraFinalButton));
+        addSendButtonListener();
+        addSaveSendLaterButtonListener((Button) findViewById(R.id.saveAndSendLaterButton));
+        Context context = getBaseContext();
+        initTypeSpinner((Spinner) findViewById(R.id.typeSpinner), context, getString(R.string.type_default_message));
+        initStateSpinner((Spinner) findViewById(R.id.stateSpinner), context, getString(R.string.state_default_message));
+        initDiameterSpinner((Spinner) findViewById(R.id.diameterSpinner), context, getString(R.string.diameter_default_message));
+        initPlumbSpinner((Spinner) findViewById(R.id.plumbSpinner), context, getString(R.string.plumb_default_message));
+        initLocationRequest();
     }
 
     private void initLocationRequest() {
@@ -87,7 +79,7 @@ public class SinkCreationActivity extends AppCompatActivity implements GoogleApi
                 .addApi(LocationServices.API)
                 .build();
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        //locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
     }
 
     @Override
@@ -102,32 +94,6 @@ public class SinkCreationActivity extends AppCompatActivity implements GoogleApi
             mGoogleApiClient.disconnect();
         }
         super.onStop();
-    }
-
-    private void initialize() {
-        setContentView(R.layout.activity_sink_creation);
-        addCameraButtonListener();
-        addSendButtonListener();
-        addSaveSendLaterButtonListener();
-        Context context = getBaseContext();
-        initTypeSpinner((Spinner) findViewById(R.id.typeSpinner), context, getString(R.string.type_default_message));
-        initStateSpinner((Spinner) findViewById(R.id.stateSpinner), context, getString(R.string.state_default_message));
-        initDiameterSpinner((Spinner) findViewById(R.id.diameterSpinner), context, getString(R.string.diameter_default_message));
-        initPlumbSpinner((Spinner) findViewById(R.id.plumbSpinner), context, getString(R.string.plumb_default_message));
-        initLocationRequest();
-    }
-
-    private void addCameraButtonListener() {
-        Button cameraButtonAfter = (Button) findViewById(R.id.cameraFinalButton);
-        imageViewAfter = (ImageView) findViewById(R.id.imageViewAfter);
-
-        cameraButtonAfter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openChoice = new Intent(getBaseContext(), PhotoChoiceActivity.class);
-                startActivityForResult(openChoice, PHOTO_REQUEST_CODE);
-            }
-        });
     }
 
     private void addSendButtonListener() {
@@ -147,40 +113,18 @@ public class SinkCreationActivity extends AppCompatActivity implements GoogleApi
         });
     }
 
-    private void addSaveSendLaterButtonListener() {
-        Button saveSendLaterButton = (Button) findViewById(R.id.saveAndSendLaterButton);
-
-        saveSendLaterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SinkBean sinkBean = new SinkBean();
-                Context context = getBaseContext();
-                if (createSinkBean(sinkBean)) {
-                    boolean fileCreated = customService.createAndSaveFile(sinkBean, context);
-                    if (fileCreated) {
-                        ActivityUtils.showToastMessage(getString(R.string.success_save_message), context);
-                        finish();
-                    } else {
-                        ActivityUtils.showToastMessage(getString(R.string.try_later_message), context);
-                    }
-                } else {
-                    ActivityUtils.showToastMessage(getString(R.string.required_fields_empty_message), context);
-                }
-            }
-        });
-    }
-
-    private boolean createSinkBean(SinkBean sinkBean) {
+    @Override
+    protected boolean createSinkBean(SinkBean sinkBean) {
 
         sinkBean.setSinkCreationDate(new Date());
         sinkBean.setAdresse(getAddressBean());
 
-        Bitmap imageViewAfterDrawingCache = imageViewAfter.getDrawingCache();
+        Bitmap imageViewAfterDrawingCache = getImageView().getDrawingCache();
 
         if (imageViewAfterDrawingCache != null) {
             sinkBean.setImageAfter(customService.encodeBase64(imageViewAfterDrawingCache));
         }
-        imageViewAfter.setDrawingCacheEnabled(true);
+        getImageView().setDrawingCacheEnabled(true);
 
         boolean referenceExists = referenceExists(sinkBean);
         boolean validSinkStatusEnum = isValidSinkStatusEnum(sinkBean);
@@ -190,6 +134,16 @@ public class SinkCreationActivity extends AppCompatActivity implements GoogleApi
         boolean photoExists = isPhotoTaken(sinkBean);
 
         return referenceExists && validSinkStatusEnum && validSinkTypeEnum && validSinkDiameterEnum && validSinkPlumbEnum && photoExists;
+    }
+
+    @Override
+    protected ImageView getImageView() {
+        return (ImageView) findViewById(R.id.imageViewAfter);
+    }
+
+    @Override
+    protected TextView getTextViewImage() {
+        return (TextView) findViewById(R.id.imageAfterTextView);
     }
 
     private boolean referenceExists(SinkBean sinkBean) {
@@ -204,28 +158,6 @@ public class SinkCreationActivity extends AppCompatActivity implements GoogleApi
             sinkBean.setObservations(observationsText.getText().toString());
         }
         return referenceExist;
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        new Thread(new Runnable() {
-            public void run() {
-                final Bitmap bitmap = ImageUtils.processBitMap(data);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // This code will always run on the UI thread, therefore is safe to modify UI elements.
-                        if (bitmap != null) {
-                            imageViewAfter.setImageBitmap(bitmap);
-                            imageViewAfter.setDrawingCacheEnabled(true);
-                            TextView textView = (TextView) findViewById(R.id.imageAfterTextView);
-                            textView.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
-            }
-
-        }).start();
     }
 
     @NonNull

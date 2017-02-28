@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/dialog_box"
     tools:context=".activities.PhotoChoiceActivity">
 
@@ -35,7 +35,7 @@
                 android:layout_marginBottom="20px"
                 android:layout_marginTop="20px"
                 android:fontFamily="sans-serif"
-                android:text="Seleccionar desde"
+                android:text="@string/camera.default.message"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:drawableLeft="@android:drawable/ic_menu_camera"
-            android:text="Camara"
+            android:text="@string/camera.default.message"
             android:textAllCaps="false" />
 
         <Space
@@ -67,7 +67,7 @@
             android:layout_alignParentTop="false"
             android:layout_centerHorizontal="true"
             android:drawableLeft="@android:drawable/ic_menu_gallery"
-            android:text="Galeria"
+            android:text="@string/galery.default.message"
             android:textAllCaps="false" />
 
     </LinearLayout>
