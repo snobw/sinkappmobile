@@ -15,6 +15,7 @@
         tools:context="com.inopek.duvana.sink.activities.SinkCreationActivity">
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
@@ -26,114 +27,40 @@
                 android:id="@+id/referenceTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
                 android:ems="8"
                 android:inputType="text"
+                android:selectAllOnFocus="true"
                 android:text="@string/reference.default.message" />
 
             <EditText
                 android:id="@+id/addressTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
                 android:ems="10"
-                android:inputType="textPostalAddress"
+                android:inputType="text"
+                android:selectAllOnFocus="true"
                 android:text="@string/address.default.message" />
 
             <EditText
                 android:id="@+id/complementAddressTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
                 android:ems="10"
-                android:inputType="textPostalAddress" />
+                android:inputType="text"
+                android:selectAllOnFocus="true" />
 
             <EditText
-                android:id="@+id/lengthTxt"
+                android:id="@+id/neighborhoodTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
                 android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="@string/length.default.message" />
-
-            <TextView
-                android:id="@+id/typeTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="@string/type.default.message"
-                android:textSize="16sp" />
-
-            <Spinner
-                android:id="@+id/typeSpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="15"
-                android:text="@string/type.default.message" />
-
-            <TextView
-                android:id="@+id/messageStateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="@string/state.default.message"
-                android:textSize="16sp" />
-
-            <Spinner
-                android:id="@+id/stateSpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="15" />
-
-            <TextView
-                android:id="@+id/pipelineTitle"
-                android:layout_width="321dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.05"
-                android:text="@string/empty.pipeline.default.message"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/pipelineDiameterTxt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="@string/diameter.default.message" />
-
-
-            <EditText
-                android:id="@+id/pipelineLengthTxt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="numberDecimal"
-                android:text="@string/length.default.message" />
-
-
-            <EditText
-                android:id="@+id/observations"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="top|left"
-                android:inputType="textMultiLine"
-                android:maxLines="10"
-                android:minLines="6"
-                android:scrollbars="vertical"
-                android:text="@string/observation.default.message" />
-
-
-            <ImageView
-                android:id="@+id/imageViewBefore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView"
-                android:layout_centerHorizontal="true" />
-
-            <ImageView
-                android:id="@+id/imageViewAfter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView"
-                android:layout_centerHorizontal="true" />
+                android:inputType="text"
+                android:selectAllOnFocus="true"
+                android:text="@string/neighborhood.default.message" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -141,78 +68,218 @@
                 android:clickable="false"
                 android:orientation="horizontal">
 
-
-                <Button
-                    android:id="@+id/cameraPreviousButton"
+                <Spinner
+                    android:id="@+id/stateSpinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="49dp"
-                    android:layout_below="@+id/imageViewBefore"
-                    android:layout_centerHorizontal="true"
-                    android:layout_weight="0.50"
-                    android:drawableBottom="@android:drawable/ic_menu_camera" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:ems="15" />
 
-
-                <Button
-                    android:id="@+id/cameraFinalButton"
+                <TextView
+                    android:id="@+id/stateErrorTextView"
                     android:layout_width="wrap_content"
-                    android:layout_height="49dp"
-                    android:layout_below="@+id/imageViewAfter"
-                    android:layout_centerHorizontal="true"
-                    android:layout_weight="0.50"
-                    android:drawableBottom="@android:drawable/ic_menu_camera" />
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:visibility="invisible" />
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/typeSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:ems="15" />
+
+                <TextView
+                    android:id="@+id/typeErrorTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/lengthTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:selectAllOnFocus="true"
+                android:text="@string/length.default.message" />
+
+            <TextView
+                android:id="@+id/pipelineTitle"
+                android:layout_width="321dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.05"
+                android:layout_marginLeft="20px"
+                android:layout_marginTop="10px"
+                android:text="@string/empty.pipeline.default.message"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/activity_vertical_margin" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/diameterSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:ems="15" />
+
+                <TextView
+                    android:id="@+id/diameterErrorTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/plumbSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:ems="15" />
+
+                <TextView
+                    android:id="@+id/plumbErrorTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/pipelineLengthTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:selectAllOnFocus="true"
+                android:text="@string/length.default.message" />
+
+
+            <EditText
+                android:id="@+id/observations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20px"
+                android:ems="10"
+                android:gravity="top|left"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:minLines="6"
+                android:scrollbars="vertical"
+                android:selectAllOnFocus="true"
+                android:text="@string/observation.default.message" />
+
+            <TextView
+                android:id="@+id/imageAfterTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:fontFamily="sans-serif"
+                android:text="@string/after.default.message"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+
+            <ImageView
+                android:id="@+id/imageViewAfter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView"
+                android:layout_centerHorizontal="true" />
+
+            <Button
+                android:id="@+id/cameraFinalButton"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_below="@+id/imageViewAfter"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="0.50"
+                android:drawableLeft="@android:drawable/ic_menu_camera"
+                android:text="@string/after.default.message"
+                android:textAllCaps="false" />
+
             <Button
                 android:id="@+id/sendButton"
-                android:layout_width="350dp"
+                android:layout_width="match_parent"
                 android:layout_height="49dp"
-                android:drawableBottom="@android:drawable/ic_menu_send"
-                android:gravity="top|center_vertical|center_horizontal|center" />
+                android:drawableLeft="@android:drawable/ic_menu_send"
+                android:drawablePadding="-5sp"
+                android:gravity="top|center_vertical|center_horizontal|center"
+                android:text="@string/send.default.message"
+                android:textAllCaps="false" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/saveAndSendLaterButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top|center_horizontal"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                android:layout_height="49dp"
+                android:drawableLeft="@android:drawable/ic_menu_save"
+                android:drawablePadding="-5sp"
+                android:gravity="top|center_vertical|center_horizontal|center"
+                android:text="@string/save.send.later.default.message"
+                android:textAllCaps="false" />
 
-                <Button
-                    android:id="@+id/exitButton"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:drawableBottom="@android:drawable/ic_delete"
-                    android:gravity="top|center_horizontal|center" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Button
-                    android:id="@+id/addButton"
-                    android:layout_width="150dp"
-                    android:layout_height="49dp"
-                    android:drawableBottom="@android:drawable/ic_input_add"
-                    android:gravity="top|center_vertical|center_horizontal|center" />
-
-            </LinearLayout>
-
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="119dp"
-            android:layout_marginTop="15dp"
-            android:layout_weight="1" />
 
     </RelativeLayout>
 </ScrollView>

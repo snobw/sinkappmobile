@@ -2,19 +2,35 @@
     <!--create sink activity messages-->
     <string name="app_name">Duvana - Sumideros</string>
     <string name="reference.default.message">Referencia</string>
+    <string name="client.default.title">Cliente</string>
+    <string name="date.default.title">Fecha</string>
     <string name="address.default.message">Direccion</string>
-    <string name="type.default.message">Typo</string>
-    <string name="length.default.message">Longitud (ml)</string>
+    <string name="neighborhood.default.message">Barrio</string>
+    <string name="type.default.message">Tipo</string>
+    <string name="length.default.message">Longitud</string>
     <string name="state.default.message">Estado del sumidero</string>
+    <string name="before.default.message">Foto antes</string>
+    <string name="after.default.message">Foto después</string>
     <string name="state.good.default.message">Bueno</string>
     <string name="state.bad.default.message">Malo</string>
     <string name="state.moderate.default.message">Regular</string>
-    <string name="empty.pipeline.default.message">Tuberia descargada</string>
+    <string name="empty.pipeline.default.message">Tuberia de descarga</string>
     <string name="diameter.default.message">Diametro</string>
+    <string name="plumb.default.message">Sondeo</string>
     <string name="observation.default.message">Observaciones</string>
     <!--main activity message-->
-    <string name="button.add.title">Crear reporte</string>
-    <string name="button.edit.title">Editar reporte</string>
+    <string name="button.before.add.title">Iniciar reporte</string>
+    <string name="button.add.title">Completar reporte</string>
+    <string name="button.edit.title">Consultar reporte</string>
     <string name="button.send.title">Enviar reporte</string>
     <string name="button.exit.title">Salir</string>
+    <string name="save.send.later.default.message">Guardar y enviar después</string>
+    <string name="send.default.message">Enviar reporte</string>
+    <string name="alert.default.message">Alerte</string>
+    <string name="required.fields.empty.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
+    <string name="success.save.message">Los datos han sido guardados exitosamente</string>
+    <string name="try.later.message">Un error se produjo, intente mas tarde</string>
+    <string name="address.gps.error.message">Un error se produjo y no es posible obtener la direccion</string>
+    <string name="success.send.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package com.inopek.duvana.sink;
+package com.inopek.duvana.sink.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;

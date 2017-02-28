@@ -10,7 +10,7 @@ import dagger.Provides;
 public class AppModule {
 
     @Provides
-    CustomService providesRequirementValidationService() {
+    CustomService providesCustomService() {
         return new CustomServiceImpl();
     }
 

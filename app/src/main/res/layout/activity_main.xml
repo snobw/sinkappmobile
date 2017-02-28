@@ -8,7 +8,7 @@
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
     android:paddingTop="5dp"
-    tools:context="com.inopek.duvana.sink.MainActivity">
+    tools:context="com.inopek.duvana.sink.activities.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,11 +19,25 @@
         android:weightSum="1">
 
         <Button
+            android:id="@+id/addSinkBeforeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_input_add"
+            android:text="@string/button.before.add.title"
+            android:textAllCaps="false" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/activity_horizontal_margin" />
+
+        <Button
             android:id="@+id/addSinkButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@android:drawable/btn_star_big_on"
-            android:text="@string/button.add.title" />
+            android:drawableLeft="@android:drawable/ic_menu_edit"
+            android:text="@string/button.add.title"
+            android:textAllCaps="false" />
 
         <Space
             android:layout_width="match_parent"
@@ -34,8 +48,9 @@
             android:id="@+id/editSinkButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@android:drawable/ic_menu_edit"
-            android:text="@string/button.edit.title" />
+            android:drawableLeft="@android:drawable/ic_menu_view"
+            android:text="@string/button.edit.title"
+            android:textAllCaps="false" />
 
         <Space
             android:layout_width="match_parent"
@@ -47,7 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_menu_send"
-            android:text="@string/button.send.title" />
+            android:text="@string/button.send.title"
+            android:textAllCaps="false" />
 
         <Space
             android:layout_width="match_parent"
@@ -59,7 +75,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_lock_power_off"
-            android:text="@string/button.exit.title" />
+            android:text="@string/button.exit.title"
+            android:textAllCaps="false" />
 
         <Space
             android:layout_width="match_parent"

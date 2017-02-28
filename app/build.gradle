@@ -45,5 +45,11 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.android.gms:play-services-location:10.0.1'
+    compile 'com.google.android.gms:play-services-maps:10.0.1'
+
 }
+
 

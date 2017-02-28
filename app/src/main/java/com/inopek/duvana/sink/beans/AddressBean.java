@@ -11,6 +11,7 @@ public class AddressBean implements Serializable {
     private String zipCode;
     private String city;
     private String country;
+    private String neighborhood;
 
     public Long getId() {
         return id;
@@ -60,4 +61,11 @@ public class AddressBean implements Serializable {
         this.country = country;
     }
 
+    public String getNeighborhood() {
+        return neighborhood;
+    }
+
+    public void setNeighborhood(String neighborhood) {
+        this.neighborhood = neighborhood;
+    }
 }

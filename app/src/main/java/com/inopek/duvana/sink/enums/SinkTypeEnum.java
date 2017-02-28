@@ -14,7 +14,7 @@ public enum SinkTypeEnum {
         this.label = label;
     }
 
-    public static SinkTypeEnum getSinkStatutEnumByName(String label) {
+    public static SinkTypeEnum getSinkTypeEnum(String label) {
         if (LATERAL.getLabel().equals(label)) {
             return SinkTypeEnum.LATERAL;
         } else if (COVENTIONAL.getLabel().equals(label)) {
