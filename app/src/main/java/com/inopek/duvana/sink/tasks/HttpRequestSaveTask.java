@@ -15,19 +15,29 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class HttpRequestSaveTask extends AsyncTask<Void, Void, SinkBean> {
 
     private static final int CONNECT_TIMEOUT = 10000;
     private static final String HTTP_PREFIX = "http://";
     private static final String ADDRESS_HOST = "duvana.server.host.address";
     private static final String PORT_HOST = "duvana.server.host.port";
-    private final SinkBean sinkBean;
+    private Set<SinkBean> sinks;
     private final Context context;
     private ProgressDialog dialog = null;
 
     public HttpRequestSaveTask(SinkBean sinkBean, Context context) {
         super();
-        this.sinkBean = sinkBean;
+        this.context = context;
+        sinks = new HashSet<>();
+        sinks.add(sinkBean);
+    }
+
+    public HttpRequestSaveTask(Set<SinkBean> sinks, Context context) {
+        super();
+        this.sinks = sinks;
         this.context = context;
     }
 
@@ -44,12 +54,13 @@ public class HttpRequestSaveTask extends AsyncTask<Void, Void, SinkBean> {
             final String url = HTTP_PREFIX + PropertiesUtils.getProperty(ADDRESS_HOST, context) + ":" + PropertiesUtils.getProperty(PORT_HOST, context) + "/save";
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(CONNECT_TIMEOUT);
-            SinkBean resultSinkBean = restTemplate.postForObject(url, sinkBean, SinkBean.class);
+            ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setConnectTimeout(CONNECT_TIMEOUT);
+            // TODO check result the delete files
+            restTemplate.postForObject(url, sinks, SinkBean.class);
 
 
 //            SinkBean sinkBean = restTemplate.getForObject(url, SinkBean.class);
-            return resultSinkBean;
+            return null;
         } catch (Exception e) {
             Log.e("MainActivity", e.getMessage(), e);
             return null;
@@ -58,6 +69,7 @@ public class HttpRequestSaveTask extends AsyncTask<Void, Void, SinkBean> {
 
     @Override
     protected void onPostExecute(SinkBean sinkBean) {
+        // TODO update signature
         if (dialog.isShowing()) { // if dialog box showing = true
             dialog.dismiss(); // dismiss it
         }

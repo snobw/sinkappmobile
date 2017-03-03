@@ -34,5 +34,6 @@
     <string name="try.later.message">Un error se produjo, intente mas tarde</string>
     <string name="address.gps.error.message">Un error se produjo y no es posible obtener la direccion</string>
     <string name="success.send.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
+    <string name="empty.list.send.message">Debe seleccionar al menos una linea de la lista</string>
 
 </resources>

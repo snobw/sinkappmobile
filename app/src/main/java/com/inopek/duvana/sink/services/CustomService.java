@@ -5,8 +5,7 @@ import android.graphics.Bitmap;
 
 import com.inopek.duvana.sink.beans.SinkBean;
 
-import java.io.FileNotFoundException;
-import java.util.List;
+import java.util.ArrayList;
 
 public interface CustomService {
 
@@ -30,6 +29,6 @@ public interface CustomService {
     /**
      * @return
      */
-    List<SinkBean> getAllSinksToSend(Context context);
+    ArrayList<SinkBean> getAllSinksToSend(Context context);
 
 }

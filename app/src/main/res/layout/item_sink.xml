@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:stretchColumns="*">
+
+
+    <TableLayout
+        android:id="@+id/tableReport"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="*">
+
+
+        <TableRow
+            android:id="@+id/tableContentRow"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_white">
+
+            <CheckBox android:id="@+id/itemCheckBox" />
+
+            <TextView
+                android:id="@+id/referenceTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textColor="@android:color/black"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:textColor="@android:color/black"
+                android:textStyle="normal|bold" />
+
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>

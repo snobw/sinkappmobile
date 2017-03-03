@@ -13,6 +13,7 @@ import com.inopek.duvana.sink.services.CustomService;
 import com.inopek.duvana.sink.services.CustomServiceUtils;
 import com.inopek.duvana.sink.utils.PropertiesUtils;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.BufferedWriter;
@@ -71,22 +72,24 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
-    public List<SinkBean> getAllSinksToSend(Context context) {
-        List<SinkBean> sinkBeans = new ArrayList<>();
+    public ArrayList<SinkBean> getAllSinksToSend(Context context) {
+        ArrayList<SinkBean> sinkBeans = new ArrayList<>();
         try {
             Reader reader;
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
             File directory = new File(path);
             File[] files = directory.listFiles();
-            for (File file : files) {
-                reader = new FileReader(file);
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
-                if (sinkBean != null) {
-                    sinkBeans.add(sinkBean);
+            if(ArrayUtils.isNotEmpty(files)) {
+                for (File file : files) {
+                    reader = new FileReader(file);
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
+                    if (sinkBean != null) {
+                        sinkBeans.add(sinkBean);
+                    }
+                    reader.close();
                 }
-                reader.close();
             }
 
         } catch (IOException ex) {

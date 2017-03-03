@@ -1,19 +1,20 @@
 package com.inopek.duvana.sink.activities;
 
+import android.Manifest;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
 import com.inopek.duvana.sink.R;
-import com.inopek.duvana.sink.activities.SinkBeforeCreationActivity;
-import com.inopek.duvana.sink.activities.SinkCreationActivity;
-import com.inopek.duvana.sink.activities.SinkSendActivity;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
 
 import javax.inject.Inject;
+
+import static com.inopek.duvana.sink.constants.SinkConstants.PHOTO_REQUEST_CODE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +34,20 @@ public class MainActivity extends AppCompatActivity {
         createSinkActivity();
         sendSinkActivity();
         beforeCreateSinkActivity();
+        chekPermissions();
+
+    }
+
+    private void chekPermissions() {
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.SYSTEM_ALERT_WINDOW,
+                        Manifest.permission.READ_EXTERNAL_STORAGE}, PHOTO_REQUEST_CODE);
 
     }
 

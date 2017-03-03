@@ -141,6 +141,22 @@ public class SinkBean {
     public void setClient(ClientBean client) {
         this.client = client;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SinkBean sinkBean = (SinkBean) o;
+
+        return reference.equals(sinkBean.reference);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return reference.hashCode();
+    }
 }
 
 
