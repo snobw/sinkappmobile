@@ -1,11 +1,11 @@
 package com.inopek.duvana.sink.activities;
 
 import android.Manifest.permission;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,10 +28,10 @@ import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.beans.AddressBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.enums.SinkDiameterEnum;
-import com.inopek.duvana.sink.enums.SinkPlumbEnum;
-import com.inopek.duvana.sink.enums.SinkStatutEnum;
+import com.inopek.duvana.sink.enums.SinkPlumbOptionEnum;
+import com.inopek.duvana.sink.enums.SinkStatusEnum;
 import com.inopek.duvana.sink.enums.SinkTypeEnum;
-import com.inopek.duvana.sink.tasks.HttpRequestSaveTask;
+import com.inopek.duvana.sink.tasks.HttpRequestSendBeanTask;
 import com.inopek.duvana.sink.utils.AddressUtils;
 
 import java.util.Arrays;
@@ -41,6 +41,8 @@ import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initDiameter
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initPlumbSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initStateSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initTypeSpinner;
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.setDefaultClient;
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.hasText;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.isNumeric;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.isValidSpinner;
@@ -104,20 +106,41 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
             public void onClick(View v) {
                 SinkBean sinkBean = new SinkBean();
                 if (createSinkBean(sinkBean)) {
-                    AsyncTask<Void, Void, SinkBean> execute = new HttpRequestSaveTask(sinkBean, getBaseContext()).execute();
-                } else {
-                    // Message d'error
-                    ActivityUtils.showToastMessage(getString(R.string.try_later_message), getApplicationContext());
+                    runTask(sinkBean);
                 }
             }
         });
+    }
+
+    private void runTask(final SinkBean sink) {
+
+        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this)) {
+
+            ProgressDialog dialog;
+            @Override
+            protected void onPostExecute(Long id) {
+                dialog.dismiss();
+                if (id == null) {
+                    showToastMessage(getString(R.string.try_later_message), getBaseContext());
+                } else {
+                    showToastMessage(getString(R.string.success_save_message), getBaseContext());
+                    finish();
+                }
+            }
+
+            @Override
+            protected void onPreExecute() {
+                dialog = ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), getBaseContext());
+            }
+        }.execute();
+
     }
 
     @Override
     protected boolean createSinkBean(SinkBean sinkBean) {
 
         sinkBean.setSinkCreationDate(new Date());
-        sinkBean.setAdresse(getAddressBean());
+        sinkBean.setAddress(getAddressBean());
 
         Bitmap imageViewAfterDrawingCache = getImageView().getDrawingCache();
 
@@ -125,6 +148,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
             sinkBean.setImageAfter(customService.encodeBase64(imageViewAfterDrawingCache));
         }
         getImageView().setDrawingCacheEnabled(true);
+        setDefaultClient(sinkBean, this, getString(R.string.client_name_preference));
 
         boolean referenceExists = referenceExists(sinkBean);
         boolean validSinkStatusEnum = isValidSinkStatusEnum(sinkBean);
@@ -178,7 +202,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
         textView.setVisibility(View.INVISIBLE);
         if (isValidSpinner(spinner, getString(R.string.state_default_message), textView)) {
             String selectedItem = (String) spinner.getSelectedItem();
-            sinkBean.setSinkStatutId(SinkStatutEnum.getSinkStatutEnumByName(selectedItem).getId());
+            sinkBean.setSinkStatusId(SinkStatusEnum.getSinkStatutEnumByName(selectedItem).getId());
             return true;
         }
         return false;
@@ -196,7 +220,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
                 EditText lengthText = (EditText) findViewById(R.id.lengthTxt);
                 boolean lengthExists = isNumeric(lengthText, getString(R.string.length_default_message));
                 if (lengthExists) {
-                    sinkBean.setLenght(Long.valueOf(lengthText.getText().toString().trim()));
+                    sinkBean.setLength(Long.valueOf(lengthText.getText().toString().trim()));
                 } else {
                     return false;
                 }
@@ -225,17 +249,17 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
         textView.setVisibility(View.INVISIBLE);
         if (isValidSpinner(spinner, getString(R.string.plumb_default_message), textView)) {
             String selectedItem = (String) spinner.getSelectedItem();
-            SinkPlumbEnum sinkPlumbEnum = SinkPlumbEnum.getSinkPlumbEnum(selectedItem);
-            if (SinkPlumbEnum.YES.equals(sinkPlumbEnum)) {
+            SinkPlumbOptionEnum sinkPlumbOptionEnum = SinkPlumbOptionEnum.getSinkPlumbEnum(selectedItem);
+            if (SinkPlumbOptionEnum.YES.equals(sinkPlumbOptionEnum)) {
                 EditText pipeLineLenghtText = (EditText) findViewById(R.id.pipelineLengthTxt);
                 boolean lengthExists = isNumeric(pipeLineLenghtText, getString(R.string.length_default_message));
                 if (lengthExists) {
-                    sinkBean.setPipeLineLenght(Long.valueOf(pipeLineLenghtText.getText().toString().trim()));
+                    sinkBean.setPipeLineLength(Long.valueOf(pipeLineLenghtText.getText().toString().trim()));
                 } else {
                     return false;
                 }
             }
-            sinkBean.setPlumbOptionId(sinkPlumbEnum.getId());
+            sinkBean.setPlumbOptionId(sinkPlumbOptionEnum.getId());
             return true;
         }
         return false;
@@ -291,4 +315,6 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
             addressBean = AddressUtils.initAddressFromLocation((EditText) findViewById(R.id.addressTxt), (EditText) findViewById(R.id.neighborhoodTxt), getBaseContext(), lastLocation);
         }
     }
+
+
 }

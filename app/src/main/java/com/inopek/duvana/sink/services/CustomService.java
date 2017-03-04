@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.inopek.duvana.sink.beans.SinkBean;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface CustomService {
 
@@ -25,6 +26,12 @@ public interface CustomService {
      * @param sinkBean
      */
     boolean createAndSaveFile(SinkBean sinkBean, Context context);
+
+    /**
+     * delete all files with fileNames'name
+     * @param fileNames
+     */
+    void deleteFiles(List<String> fileNames);
 
     /**
      * @return

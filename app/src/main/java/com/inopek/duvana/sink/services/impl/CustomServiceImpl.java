@@ -72,6 +72,14 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
+    public void deleteFiles(List<String> fileNames) {
+        for(String fileName : fileNames) {
+            File file = new File(fileName);
+            file.delete();
+        }
+    }
+
+    @Override
     public ArrayList<SinkBean> getAllSinksToSend(Context context) {
         ArrayList<SinkBean> sinkBeans = new ArrayList<>();
         try {
@@ -79,13 +87,14 @@ public class CustomServiceImpl implements CustomService {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
             File directory = new File(path);
             File[] files = directory.listFiles();
-            if(ArrayUtils.isNotEmpty(files)) {
+            if (ArrayUtils.isNotEmpty(files)) {
                 for (File file : files) {
                     reader = new FileReader(file);
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
                     SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
                     if (sinkBean != null) {
+                        sinkBean.setFileName(file.getAbsolutePath());
                         sinkBeans.add(sinkBean);
                     }
                     reader.close();

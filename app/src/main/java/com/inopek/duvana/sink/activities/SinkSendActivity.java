@@ -1,6 +1,6 @@
 package com.inopek.duvana.sink.activities;
 
-import android.os.AsyncTask;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,16 +12,20 @@ import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.adapters.SinkBeanAdapter;
 import com.inopek.duvana.sink.beans.SinkBean;
+import com.inopek.duvana.sink.beans.UserBean;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
-import com.inopek.duvana.sink.tasks.HttpRequestSaveTask;
+import com.inopek.duvana.sink.tasks.HttpRequestSendFileTask;
 
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
 
 public class SinkSendActivity extends AppCompatActivity {
 
@@ -48,15 +52,40 @@ public class SinkSendActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Set<SinkBean> sinks = adapter.getSinks();
                 if (CollectionUtils.isEmpty(sinks)) {
-                    ActivityUtils.showToastMessage(getString(R.string.empty_list_send_message), getBaseContext());
+                    showToastMessage(getString(R.string.empty_list_send_message), getBaseContext());
                 } else {
                     //send report
-                    AsyncTask<Void, Void, SinkBean> execute = new HttpRequestSaveTask(sinks, getBaseContext()).execute();
+                    runTask(sinks);
                 }
             }
         });
     }
 
+    private void runTask(Set<SinkBean> sinks) {
+        String imeNumber = ActivityUtils.getStringPreference(this, R.string.imi_name_preference, getString(R.string.imi_name_preference));
+        UserBean userBean = new UserBean(imeNumber);
+        new HttpRequestSendFileTask(sinks, getBaseContext(), userBean) {
+
+            ProgressDialog dialog;
+            @Override
+            protected void onPostExecute(List<String> fileNames) {
+                dialog.dismiss();
+                if (CollectionUtils.isEmpty(fileNames)) {
+                    showToastMessage(getString(R.string.try_later_message), getBaseContext());
+                } else {
+                    showToastMessage(getString(R.string.success_save_message), getBaseContext());
+                    customService.deleteFiles(fileNames);
+                    populate();
+                }
+            }
+
+            @Override
+            protected void onPreExecute() {
+                dialog = ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), getBaseContext());
+            }
+        }.execute();
+
+    }
 
     private void addCheckBoxListener() {
         final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBoxAll);
@@ -85,6 +114,5 @@ public class SinkSendActivity extends AppCompatActivity {
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(R.id.sinksListView);
         listView.setAdapter(adapter);
-
     }
 }
