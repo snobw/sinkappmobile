@@ -1,6 +1,6 @@
 package com.inopek.duvana.sink.enums;
 
-public enum SinkPlumbEnum {
+public enum SinkPlumbOptionEnum {
 
     YES(1L, "Si"),
     NO(2L, "No");
@@ -8,16 +8,16 @@ public enum SinkPlumbEnum {
     private final Long id;
     private final String label;
 
-    private SinkPlumbEnum(Long id, String label) {
+    SinkPlumbOptionEnum(Long id, String label) {
         this.id = id;
         this.label = label;
     }
 
-    public static SinkPlumbEnum getSinkPlumbEnum(String label) {
+    public static SinkPlumbOptionEnum getSinkPlumbEnum(String label) {
         if (YES.getLabel().equals(label)) {
-            return SinkPlumbEnum.YES;
+            return SinkPlumbOptionEnum.YES;
         } else if (NO.getLabel().equals(label)) {
-            return SinkPlumbEnum.NO;
+            return SinkPlumbOptionEnum.NO;
         }
         throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", label));
     }

@@ -9,13 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inopek.duvana.sink.R;
-import com.inopek.duvana.sink.beans.ClientBean;
 import com.inopek.duvana.sink.beans.SinkBean;
-import com.inopek.duvana.sink.utils.PropertiesUtils;
 
-import java.io.IOException;
 import java.util.Date;
 
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.setDefaultClient;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.hasText;
 import static com.inopek.duvana.sink.services.CustomServiceUtils.photoExists;
 
@@ -64,12 +62,6 @@ public class SinkBeforeCreationActivity extends AbstractCreationActivity {
     }
 
     private void setClient(SinkBean sinkBean) {
-        try {
-            String clientName = PropertiesUtils.getProperty("duvana.sink.client", getApplicationContext());
-            ClientBean clientBean = new ClientBean(clientName);
-            sinkBean.setClient(clientBean);
-        } catch (IOException e) {
-        }
-
+        setDefaultClient(sinkBean, this, getString(R.string.client_name_preference));
     }
 }
