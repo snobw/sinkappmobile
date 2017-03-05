@@ -4,6 +4,9 @@
     <string name="client_name.preference">CLIENT</string>
     <string name="profile_name.preference">PROFILE</string>
     <string name="imi_name.preference">IMI</string>
+    <string name="settings.title"><u>Configure las siguientes preferencias antes de comenzar</u></string>
+    <string name="profile.title"><u>Perfil del usuario :</u></string>
+    <string name="client.title"><u>Cliente :</u></string>
     <string name="camera.default.message">Camara</string>
     <string name="galery.default.message">Galeria</string>
     <string name="photo.choice.default.message">Seleccionar desde</string>
@@ -28,6 +31,7 @@
     <string name="button.add.title">Completar reporte</string>
     <string name="button.edit.title">Consultar reporte</string>
     <string name="button.send.title">Enviar reporte</string>
+    <string name="button.save.title">Guardar</string>
     <string name="button.exit.title">Salir</string>
     <string name="save.send.later.default.message">Guardar y enviar después</string>
     <string name="send.default.message">Enviar reporte</string>

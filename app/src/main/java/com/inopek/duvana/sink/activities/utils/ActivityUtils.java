@@ -62,7 +62,7 @@ public final class ActivityUtils {
         return dialog;
     }
 
-    private static void mapSpinner(Spinner spinner, List<String> elements, Context context) {
+    public static void mapSpinner(Spinner spinner, List<String> elements, Context context) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_spinner_dropdown_item, elements);
         spinner.setAdapter(adapter);
