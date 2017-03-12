@@ -4,8 +4,11 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -17,14 +20,13 @@ import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
 
-import org.apache.commons.lang3.StringUtils;
-
 import javax.inject.Inject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.inopek.duvana.sink.constants.SinkConstants.PHOTO_REQUEST_CODE;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int PERMISSIONS_REQUEST_CODE = 10;
 
     @Inject
     CustomService customService;
@@ -37,33 +39,67 @@ public class MainActivity extends AppCompatActivity {
         // inject dependecies
         Injector.getInstance().getAppComponent().inject(this);
         checkCamera();
-
-        // open sink creation activity
-        createSettingkActivity();
-        createSendSinkActivity();
-        chekPermissions();
-        checkPreferences();
-        settingPreferences();
-        checkProfileAndCreateActivities();
+        askForPermission();
         endActivity();
     }
 
-    private void checkPreferences() {
-        String profilePreference = ActivityUtils.getStringPreference(this, R.string.profile_name_preference, getString(R.string.profile_name_preference));
-        String clientPreference = ActivityUtils.getStringPreference(this, R.string.client_name_preference, getString(R.string.client_name_preference));
-
-        if (StringUtils.isEmpty(profilePreference) || StringUtils.isEmpty(clientPreference)) {
-            finish();
-            startActivity(getSettingActivityIntent());
+    private void askForPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String[] permissions = new String[]{Manifest.permission.INTERNET,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.READ_PHONE_STATE};
+            requestPermissions(permissions, PERMISSIONS_REQUEST_CODE);
+        } else {
+            // Permission Granted
+            createSettingkActivity();
+            settingPreferences();
+            createSendSinkActivity();
         }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 10:
+                if (hasAllPermissionsGranted()) {
+                    // Permission Granted
+                    createSettingkActivity();
+                    settingPreferences();
+                    createSendSinkActivity();
+
+                } else {
+                    // Permission Denied
+                    askForPermission();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public boolean hasAllPermissionsGranted() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void settingPreferences() {
         SharedPreferences sharedPref = getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        editor.putString(getString(R.string.imi_name_preference), telephonyManager.getDeviceId());
+        String identifier = telephonyManager.getDeviceId();
+        if(identifier == null) {
+            identifier = Settings.Secure.getString(getBaseContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        editor.putString(getString(R.string.imei_name_preference), identifier);
         editor.commit();
+        checkProfileAndCreateActivities();
+
     }
 
     private void checkProfileAndCreateActivities() {
@@ -76,21 +112,10 @@ public class MainActivity extends AppCompatActivity {
             createSinkActivity();
             Button button = (Button) findViewById(R.id.addSinkBeforeButton);
             button.setEnabled(false);
+        } else {
+            finish();
+            startActivity(getSettingActivityIntent());
         }
-    }
-
-    private void chekPermissions() {
-
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.INTERNET,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.SYSTEM_ALERT_WINDOW,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_PHONE_STATE}, PHOTO_REQUEST_CODE);
-
     }
 
     private void createSendSinkActivity() {

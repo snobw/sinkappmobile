@@ -54,9 +54,9 @@ public final class ActivityUtils {
         mapSpinner(spinner, options, context);
     }
 
-    public static ProgressDialog createProgressDialog(String message, Context context) {
-        ProgressDialog dialog = new ProgressDialog(context);
-        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
+    public static ProgressDialog createProgressDialog(String message, final Activity activity) {
+        ProgressDialog dialog = new ProgressDialog(activity);
+        dialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
         dialog.setMessage(message);
         dialog.show();
         return dialog;
@@ -81,7 +81,7 @@ public final class ActivityUtils {
     }
 
     public static UserBean getCurrentUser(final Activity activity) {
-        String imeNumber = ActivityUtils.getStringPreference(activity, R.string.imi_name_preference, activity.getString(R.string.imi_name_preference));
+        String imeNumber = ActivityUtils.getStringPreference(activity, R.string.imei_name_preference, activity.getString(R.string.imei_name_preference));
         return new UserBean(imeNumber);
     }
 

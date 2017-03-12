@@ -62,29 +62,38 @@ public class SinkSendActivity extends AppCompatActivity {
     }
 
     private void runTask(Set<SinkBean> sinks) {
-        String imeNumber = ActivityUtils.getStringPreference(this, R.string.imi_name_preference, getString(R.string.imi_name_preference));
-        UserBean userBean = new UserBean(imeNumber);
-        new HttpRequestSendFileTask(sinks, getBaseContext(), userBean) {
+        String identifier = ActivityUtils.getStringPreference(this, R.string.imei_name_preference, getString(R.string.imei_name_preference));
+        if(getString(R.string.imei_name_preference).equals(identifier)) {
+            showToastMessage(getString(R.string.imei_error), getBaseContext());
+        } else {
+            UserBean userBean = new UserBean(identifier);
+            new HttpRequestSendFileTask(sinks, getBaseContext(), userBean) {
 
-            ProgressDialog dialog;
-            @Override
-            protected void onPostExecute(List<String> fileNames) {
-                dialog.dismiss();
-                if (CollectionUtils.isEmpty(fileNames)) {
-                    showToastMessage(getString(R.string.try_later_message), getBaseContext());
-                } else {
-                    showToastMessage(getString(R.string.success_save_message), getBaseContext());
-                    customService.deleteFiles(fileNames);
-                    populate();
+                ProgressDialog dialog;
+
+                @Override
+                protected void onPostExecute(List<String> fileNames) {
+                    dialog.dismiss();
+                    if (CollectionUtils.isEmpty(fileNames)) {
+                        showToastMessage(getString(R.string.try_later_message), getBaseContext());
+                    } else {
+                        showToastMessage(getString(R.string.success_save_message), getBaseContext());
+                        customService.deleteFiles(fileNames);
+                        populate();
+                    }
                 }
-            }
 
-            @Override
-            protected void onPreExecute() {
-                dialog = ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), getBaseContext());
-            }
-        }.execute();
+                @Override
+                protected void onPreExecute() {
+                    dialog = createDialog();
+                }
+            }.execute();
+        }
 
+    }
+
+    private ProgressDialog createDialog() {
+        return ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), this);
     }
 
     private void addCheckBoxListener() {

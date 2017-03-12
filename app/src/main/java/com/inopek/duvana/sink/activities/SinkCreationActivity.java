@@ -117,6 +117,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
         new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this)) {
 
             ProgressDialog dialog;
+
             @Override
             protected void onPostExecute(Long id) {
                 dialog.dismiss();
@@ -130,10 +131,14 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
 
             @Override
             protected void onPreExecute() {
-                dialog = ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), getBaseContext());
+                dialog = createDialog();
             }
         }.execute();
 
+    }
+
+    private ProgressDialog createDialog() {
+        return ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), this);
     }
 
     @Override

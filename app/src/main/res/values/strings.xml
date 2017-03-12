@@ -1,9 +1,10 @@
 <resources>
     <!--create sink activity messages-->
-    <string name="app_name">Duvana - Sumideros</string>
+    <string name="app_name">Sumideros</string>
     <string name="client_name.preference">CLIENT</string>
     <string name="profile_name.preference">PROFILE</string>
-    <string name="imi_name.preference">IMI</string>
+    <string name="imei.name.preference">IMEI</string>
+    <string name="imei.error">Su usuario no ha sido registrado. Contacte el administrador</string>
     <string name="settings.title"><u>Configure las siguientes preferencias antes de comenzar</u></string>
     <string name="profile.title"><u>Perfil del usuario :</u></string>
     <string name="client.title"><u>Cliente :</u></string>
