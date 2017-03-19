@@ -1,8 +1,10 @@
 package com.inopek.duvana.sink.activities;
 
 import android.Manifest.permission;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -106,23 +108,25 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
             public void onClick(View v) {
                 SinkBean sinkBean = new SinkBean();
                 if (createSinkBean(sinkBean)) {
-                    runTask(sinkBean);
+                    runTask(sinkBean, true);
                 }
             }
         });
     }
 
-    private void runTask(final SinkBean sink) {
+    private void runTask(final SinkBean sink, final boolean checkReferenceExists) {
 
-        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this)) {
+        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists) {
 
             ProgressDialog dialog;
-
             @Override
             protected void onPostExecute(Long id) {
                 dialog.dismiss();
+
                 if (id == null) {
                     showToastMessage(getString(R.string.try_later_message), getBaseContext());
+                } else if(id == 0L) {
+                    createAlertReferenceDialog(sink);
                 } else {
                     showToastMessage(getString(R.string.success_save_message), getBaseContext());
                     finish();
@@ -139,6 +143,27 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
 
     private ProgressDialog createDialog() {
         return ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), this);
+    }
+
+    private void createAlertReferenceDialog(final SinkBean sinkBean) {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int choice) {
+                switch (choice) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        // send again
+                        runTask(sinkBean, false);
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.reference_exists_save_message))
+                .setPositiveButton("Si", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
     @Override
