@@ -29,4 +29,9 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="spinner.style" parent="Platform.Widget.AppCompat.Spinner">
+        <item name="android:textColor">@color/spinnerTextColor</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 </resources>

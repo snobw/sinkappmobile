@@ -110,12 +110,24 @@ public class MainActivity extends AppCompatActivity {
             button.setEnabled(false);
         } else if (ProfileEnum.END.getLabel().equals(profilePreference)) {
             createSinkActivity();
+            createConsultActivity();
             Button button = (Button) findViewById(R.id.addSinkBeforeButton);
             button.setEnabled(false);
         } else {
             finish();
             startActivity(getSettingActivityIntent());
         }
+    }
+
+
+    private void createConsultActivity() {
+        Button configButton = (Button) findViewById(R.id.editSinkButton);
+        configButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editIntent();
+            }
+        });
     }
 
     private void createSendSinkActivity() {
@@ -190,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
     private void settingIntent() {
         Intent settingIntent = getSettingActivityIntent();
         startActivity(settingIntent);
+    }
+
+    private void editIntent() {
+        startActivity(new Intent(this, SinkEditActivity.class));
     }
 
     private Intent getSettingActivityIntent() {

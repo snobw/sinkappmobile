@@ -6,10 +6,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-
-import com.inopek.duvana.sink.beans.SinkBean;
 
 import org.apache.commons.lang3.StringUtils;
 

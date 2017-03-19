@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.inopek.duvana.sink.activities.SinkEditActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/dateStartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:text="@string/date.start.message"
+            android:drawableLeft="@android:drawable/ic_menu_month"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/dateEndButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:text="@string/date.end.message"
+            android:drawableLeft="@android:drawable/ic_menu_month"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:id="@+id/tableReport"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
+
+            <TableRow
+                android:id="@+id/tableRow"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:background="@drawable/table_gray">
+
+                <TextView
+                    android:id="@+id/referenceTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="5dp"
+                    android:text="@string/reference.default.message"
+                    android:textColor="@android:color/black"
+                    android:textStyle="normal|bold" />
+
+                <TextView
+                    android:id="@+id/editTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="5dp"
+                    android:text="@string/edit.default.message"
+                    android:textColor="@android:color/black"
+                    android:textStyle="normal|bold" />
+
+                <TextView
+                    android:id="@+id/deleteTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="5dp"
+                    android:text="@string/delete.default.message"
+                    android:textColor="@android:color/black"
+                    android:textStyle="normal|bold" />
+
+            </TableRow>
+
+        </TableLayout>
+
+
+        <ListView
+            android:id="@+id/sinksListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

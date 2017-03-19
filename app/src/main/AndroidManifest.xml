@@ -56,6 +56,11 @@
                 <action android:name="android.intent.action.INSERT" />
             </intent-filter>
         </activity>
+        <activity android:name="com.inopek.duvana.sink.activities.SinkEditActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

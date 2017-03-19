@@ -2,6 +2,7 @@ package com.inopek.duvana.sink.activities;
 
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;

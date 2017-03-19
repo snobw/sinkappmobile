@@ -12,6 +12,10 @@
     <string name="galery.default.message">Galeria</string>
     <string name="photo.choice.default.message">Seleccionar desde</string>
     <string name="reference.default.message">Referencia</string>
+    <string name="date.start.message">Fecha de inicio</string>
+    <string name="date.end.message">Fecha de fin</string>
+    <string name="edit.default.message">Editar</string>
+    <string name="delete.default.message">Borrar</string>
     <string name="client.default.title">Cliente</string>
     <string name="date.default.title">Fecha</string>
     <string name="address.default.message">Direccion</string>
@@ -40,6 +44,7 @@
     <string name="alert.default.message">Alerte</string>
     <string name="required.fields.empty.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
     <string name="success.save.message">Los datos han sido guardados exitosamente</string>
+    <string name="reference.exists.save.message">La referencia ya existe. Esta seguro que quiere actualizarla ?</string>
     <string name="try.later.message">Un error se produjo, intente mas tarde</string>
     <string name="address.gps.error.message">Un error se produjo y no es posible obtener la direccion</string>
     <string name="success.send.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
