@@ -5,7 +5,10 @@ import java.io.Serializable;
 public class ClientBean implements Serializable {
 
     private Long id;
-    private final String name;
+    private String name;
+
+    public ClientBean() {
+    }
 
     public ClientBean(String name) {
         this.name = name;

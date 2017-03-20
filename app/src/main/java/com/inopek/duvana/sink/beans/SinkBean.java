@@ -20,6 +20,8 @@ public class SinkBean {
 
     private AddressBean address;
     private ClientBean client;
+    private UserBean userCreation;
+    private UserBean userUpdate;
     private Date sinkCreationDate;
     private Date sinkUpdateDate;
 
@@ -149,6 +151,22 @@ public class SinkBean {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public UserBean getUserCreation() {
+        return userCreation;
+    }
+
+    public void setUserCreation(UserBean userCreation) {
+        this.userCreation = userCreation;
+    }
+
+    public UserBean getUserUpdate() {
+        return userUpdate;
+    }
+
+    public void setUserUpdate(UserBean userUpdate) {
+        this.userUpdate = userUpdate;
     }
 
     @Override

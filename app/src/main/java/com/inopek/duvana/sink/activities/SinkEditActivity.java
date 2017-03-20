@@ -1,7 +1,7 @@
 package com.inopek.duvana.sink.activities;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -9,27 +9,28 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.inopek.duvana.sink.R;
-import com.inopek.duvana.sink.adapters.SinkBeanAdapter;
+import com.inopek.duvana.sink.activities.utils.ActivityUtils;
+import com.inopek.duvana.sink.adapters.SinkBeanEditionAdapter;
 import com.inopek.duvana.sink.beans.SinkBean;
-import com.inopek.duvana.sink.constants.SinkConstants;
 import com.inopek.duvana.sink.fragment.DatePickerFragment;
 import com.inopek.duvana.sink.services.CustomService;
+import com.inopek.duvana.sink.tasks.HttpRequestSearchSinkTask;
+import com.inopek.duvana.sink.utils.DateUtils;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
+import static com.inopek.duvana.sink.constants.SinkConstants.DATE_FORMAT_DD_MM_YYYY;
+
 public class SinkEditActivity extends AppCompatActivity {
 
-    private static final String DATEPICKER_TAG = "datepicker";
-
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(SinkConstants.DATE_FORMAT_DD_MM_YYYY);
-
-    private SinkBeanAdapter adapter;
+    private SinkBeanEditionAdapter adapter;
 
     @Inject
     CustomService customService;
@@ -41,27 +42,57 @@ public class SinkEditActivity extends AppCompatActivity {
         // inject dependecies
         initDatesAndDatesListeners();
         addSearchListener();
-        //populate();
     }
 
     private void addSearchListener() {
-        Button searchButoon = (Button) findViewById(R.id.searchButton);
-        searchButoon.setOnClickListener(new View.OnClickListener() {
+        Button searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // search items and populate
-                ArrayList<SinkBean> sinks = new ArrayList<>();
-                SinkBean sinkBean = new SinkBean();
-                sinkBean.setReference("789654");
-                sinks.add(sinkBean);
-                SinkBean sinkBean1= new SinkBean();
-                sinkBean1.setReference("789654");
-                sinks.add(sinkBean1);
-                adapter = new SinkBeanAdapter(getBaseContext(), sinks, true, R.layout.item_edit_sink);
-                ListView listView = (ListView) findViewById(R.id.sinksListView);
-                listView.setAdapter(adapter);
+                EditText startDateEditText = (EditText) findViewById(R.id.dateStartButton);
+                EditText endDateEditText = (EditText) findViewById(R.id.dateEndButton);
+                runSearchTask(startDateEditText.getText().toString(), endDateEditText.getText().toString());
             }
         });
+    }
+
+    private void runSearchTask(String startDate, String endDate) {
+        if(startDate == null) {
+            showToastMessage(getString(R.string.date_start_error_message), getBaseContext());
+        } else {
+            new HttpRequestSearchSinkTask(startDate, endDate, getBaseContext()) {
+
+                ProgressDialog dialog;
+
+                @Override
+                protected void onPostExecute(SinkBean[] sinkBean) {
+                    dialog.dismiss();
+                    if (sinkBean != null && sinkBean.length > 0) {
+                        populate(Arrays.asList(sinkBean));
+                    } else {
+                        showToastMessage(getString(R.string.search_try_later_message), getBaseContext());
+                    }
+                }
+
+                @Override
+                protected void onPreExecute() {
+                    dialog = createDialog();
+                }
+            }.execute();
+        }
+    }
+
+    private void populate(List<SinkBean> sinks) {
+        ArrayList<SinkBean> results = new ArrayList<>();
+        results.addAll(sinks);
+        adapter = new SinkBeanEditionAdapter(getBaseContext(), results, R.layout.item_edit_sink, this);
+        ListView listView = (ListView) findViewById(R.id.sinksListView);
+        listView.setAdapter(adapter);
+    }
+
+    private ProgressDialog createDialog() {
+        return ActivityUtils.createProgressDialog(getString(R.string.searching_default_message), this);
     }
 
     private void initDatesAndDatesListeners() {
@@ -70,8 +101,9 @@ public class SinkEditActivity extends AppCompatActivity {
         final EditText startDate = (EditText) findViewById(R.id.dateStartButton);
         final EditText endDate = (EditText) findViewById(R.id.dateEndButton);
 
-        startDate.setText(todayDate.toString(DATE_TIME_FORMATTER));
-        endDate.setText(todayDate.toString(DATE_TIME_FORMATTER));
+        String todayDateStr = DateUtils.dateToString(todayDate, DATE_FORMAT_DD_MM_YYYY);
+        startDate.setText(todayDateStr);
+        endDate.setText(todayDateStr);
 
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +123,5 @@ public class SinkEditActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
 }

@@ -6,10 +6,13 @@ import java.util.Date;
 public class UserBean implements Serializable {
 
     private static final long serialVersionUID = 1118930171242157139L;
-    private final String imiNumber;
+    private String imiNumber;
     private Long id;
     private Date creationDate;
     private Date updateDate;
+
+    public UserBean() {
+    }
 
     public UserBean(String imiNumber) {
         this.imiNumber = imiNumber;

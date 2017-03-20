@@ -13,9 +13,11 @@
     <string name="photo.choice.default.message">Seleccionar desde</string>
     <string name="reference.default.message">Referencia</string>
     <string name="date.start.message">Desde</string>
+    <string name="date.start.error.message">Debe seleccionar la fecha desde la que quiere consultar</string>
     <string name="date.end.message">Hasta</string>
     <string name="edit.default.message">Editar</string>
     <string name="delete.default.message">Borrar</string>
+    <string name="delete.ask.message">Esta seguro que desea borrar los datos de la referencia</string>
     <string name="search.default.message">Buscar</string>
     <string name="client.default.title">Cliente</string>
     <string name="date.default.title">Fecha</string>
@@ -42,11 +44,15 @@
     <string name="save.send.later.default.message">Guardar y enviar después</string>
     <string name="send.default.message">Enviar reporte</string>
     <string name="sending.default.message">Enviando reporte...</string>
+    <string name="searching.default.message">Buscando...</string>
+    <string name="deleting.default.message">Borrando...</string>
     <string name="alert.default.message">Alerte</string>
     <string name="required.fields.empty.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
     <string name="success.save.message">Los datos han sido guardados exitosamente</string>
     <string name="reference.exists.save.message">La referencia ya existe. Esta seguro que quiere actualizarla ?</string>
     <string name="try.later.message">Un error se produjo, intente mas tarde</string>
+    <string name="search.try.later.message">No se encontraron datos, intente mas tarde</string>
+    <string name="delete.try.later.message">No se pudo borrar la referencia. Intente mas tarde</string>
     <string name="address.gps.error.message">Un error se produjo y no es posible obtener la direccion</string>
     <string name="success.send.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
     <string name="empty.list.send.message">Debe seleccionar al menos una linea de la lista</string>

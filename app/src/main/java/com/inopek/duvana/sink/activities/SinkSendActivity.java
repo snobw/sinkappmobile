@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
-import com.inopek.duvana.sink.adapters.SinkBeanAdapter;
+import com.inopek.duvana.sink.adapters.SinkBeanSendAdapter;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.beans.UserBean;
 import com.inopek.duvana.sink.injectors.Injector;
@@ -29,7 +29,7 @@ import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMes
 
 public class SinkSendActivity extends AppCompatActivity {
 
-    private SinkBeanAdapter adapter;
+    private SinkBeanSendAdapter adapter;
 
     @Inject
     CustomService customService;
@@ -119,7 +119,7 @@ public class SinkSendActivity extends AppCompatActivity {
         // Construct the data source
         ArrayList<SinkBean> sinks = customService.getAllSinksToSend(getBaseContext());
         // Create the adapter to convert the array to views
-        adapter = new SinkBeanAdapter(this, sinks, false, R.layout.item_sink);
+        adapter = new SinkBeanSendAdapter(this, sinks, R.layout.item_sink);
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(R.id.sinksListView);
         listView.setAdapter(adapter);

@@ -79,17 +79,19 @@
 
                 <TextView
                     android:id="@+id/referenceTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="15dp"
+                    android:layout_weight="3"
                     android:text="@string/reference.default.message"
                     android:textColor="@android:color/black"
                     android:textStyle="normal|bold" />
 
                 <TextView
                     android:id="@+id/editTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="5dp"
@@ -99,7 +101,8 @@
 
                 <TextView
                     android:id="@+id/deleteTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="5dp"
