@@ -11,23 +11,52 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/dateStartButton"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/dateStartTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
             android:text="@string/date.start.message"
-            android:drawableLeft="@android:drawable/ic_menu_month"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
+
+        <EditText
+            android:id="@+id/dateStartButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:clickable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textAllCaps="false"/>
+
+        <TextView
+            android:id="@+id/dateEndTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/date.end.message"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
+
+        <EditText
+            android:id="@+id/dateEndButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:clickable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:textAllCaps="false"/>
 
         <Button
-            android:id="@+id/dateEndButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/searchButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:text="@string/date.end.message"
-            android:drawableLeft="@android:drawable/ic_menu_month"
-            android:textAllCaps="false"/>
+            android:text="@string/search.default.message"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -28,8 +29,14 @@ public class SinkBeanAdapter extends ArrayAdapter<SinkBean> {
 
     private List<CheckBox> checkBoxes = new ArrayList<>();
 
-    public SinkBeanAdapter(Context context, ArrayList<SinkBean> sinks) {
+    private boolean edition;
+
+    int resource;
+
+    public SinkBeanAdapter(Context context, ArrayList<SinkBean> sinks, boolean edition, int resource) {
         super(context, 0, sinks);
+        this.edition = edition;
+        this.resource = resource;
     }
 
     @Override
@@ -38,21 +45,52 @@ public class SinkBeanAdapter extends ArrayAdapter<SinkBean> {
         SinkBean sinkBean = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_sink, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(resource, parent, false);
         }
         // Lookup view for data population
         TextView referenceTv = (TextView) convertView.findViewById(R.id.referenceTextView);
+        if (!edition) {
+            addViewsForNoEdition(convertView, sinkBean);
+        } else {
+            addViewsForEdition(convertView, sinkBean);
+        }
+        // Populate the data into the template view using the data object
+        referenceTv.setText(sinkBean.getReference());
+
+        // Return the completed view to render on screen
+        return convertView;
+    }
+
+    private void addViewsForNoEdition(View convertView, SinkBean sinkBean) {
         TextView dateTv = (TextView) convertView.findViewById(R.id.dateTextView);
         CheckBox itemCheckBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox);
         itemCheckBox.setTag(sinkBean);
         addCheckListener(itemCheckBox);
         checkBoxes.add(itemCheckBox);
-
-        // Populate the data into the template view using the data object
-        referenceTv.setText(sinkBean.getReference());
         dateTv.setText(sinkBean.getSinkCreationDate() != null ? DateFormatUtils.format(sinkBean.getSinkCreationDate(), DATE_FORMAT_DD_MM_YYYY) : StringUtils.EMPTY);
-        // Return the completed view to render on screen
-        return convertView;
+    }
+
+    private void addViewsForEdition(View convertView, SinkBean sinkBean) {
+
+        Button editButton = (Button) convertView.findViewById(R.id.editButton);
+        Button deleteButton = (Button) convertView.findViewById(R.id.deleteButton);
+
+        editButton.setVisibility(View.VISIBLE);
+        deleteButton.setVisibility(View.VISIBLE);
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // open edition
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // ask user he's sure about it
+            }
+        });
     }
 
     private void addCheckListener(CheckBox checkBox) {

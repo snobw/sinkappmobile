@@ -119,7 +119,7 @@ public class SinkSendActivity extends AppCompatActivity {
         // Construct the data source
         ArrayList<SinkBean> sinks = customService.getAllSinksToSend(getBaseContext());
         // Create the adapter to convert the array to views
-        adapter = new SinkBeanAdapter(this, sinks);
+        adapter = new SinkBeanAdapter(this, sinks, false, R.layout.item_sink);
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(R.id.sinksListView);
         listView.setAdapter(adapter);

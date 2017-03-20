@@ -1,26 +1,33 @@
 package com.inopek.duvana.sink.activities;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.adapters.SinkBeanAdapter;
-import com.inopek.duvana.sink.injectors.Injector;
+import com.inopek.duvana.sink.beans.SinkBean;
+import com.inopek.duvana.sink.constants.SinkConstants;
+import com.inopek.duvana.sink.fragment.DatePickerFragment;
 import com.inopek.duvana.sink.services.CustomService;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
 public class SinkEditActivity extends AppCompatActivity {
 
     private static final String DATEPICKER_TAG = "datepicker";
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(SinkConstants.DATE_FORMAT_DD_MM_YYYY);
 
     private SinkBeanAdapter adapter;
 
@@ -32,35 +39,59 @@ public class SinkEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sink_edit);
         // inject dependecies
-        Button startDate = (Button) findViewById(R.id.dateStartButton);
-        startDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    DialogFragment newFragment = new DatePickerFragment();
-                    newFragment.show(getSupportFragmentManager(), "datePicker");
-
-            }
-        });
+        initDatesAndDatesListeners();
+        addSearchListener();
         //populate();
     }
 
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
-        }
+    private void addSearchListener() {
+        Button searchButoon = (Button) findViewById(R.id.searchButton);
+        searchButoon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // search items and populate
+                ArrayList<SinkBean> sinks = new ArrayList<>();
+                SinkBean sinkBean = new SinkBean();
+                sinkBean.setReference("789654");
+                sinks.add(sinkBean);
+                SinkBean sinkBean1= new SinkBean();
+                sinkBean1.setReference("789654");
+                sinks.add(sinkBean1);
+                adapter = new SinkBeanAdapter(getBaseContext(), sinks, true, R.layout.item_edit_sink);
+                ListView listView = (ListView) findViewById(R.id.sinksListView);
+                listView.setAdapter(adapter);
+            }
+        });
     }
+
+    private void initDatesAndDatesListeners() {
+        DateTime todayDate = new DateTime();
+
+        final EditText startDate = (EditText) findViewById(R.id.dateStartButton);
+        final EditText endDate = (EditText) findViewById(R.id.dateEndButton);
+
+        startDate.setText(todayDate.toString(DATE_TIME_FORMATTER));
+        endDate.setText(todayDate.toString(DATE_TIME_FORMATTER));
+
+        startDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.setDateText(startDate);
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+
+        endDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.setDateText(endDate);
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+    }
+
+
+
 }
