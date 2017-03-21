@@ -25,6 +25,17 @@ public enum SinkStatusEnum {
         throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", label));
     }
 
+    public static SinkStatusEnum getSinkStatusEnumById(Long id) {
+        if (GOOD.getId().equals(id)) {
+            return SinkStatusEnum.GOOD;
+        } else if (BAD.getId().equals(id)) {
+            return SinkStatusEnum.BAD;
+        } else if (MODERATE.getId().equals(id)) {
+            return SinkStatusEnum.MODERATE;
+        }
+        throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", id));
+    }
+
     public Long getId() {
         return id;
     }

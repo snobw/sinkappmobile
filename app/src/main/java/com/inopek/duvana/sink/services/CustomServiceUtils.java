@@ -59,9 +59,9 @@ public final class CustomServiceUtils {
         return true;
     }
 
-    public static boolean isValidSpinner(Spinner spinner, String value, TextView textView) {
+    public static boolean isValidSpinner(Spinner spinner, TextView textView) {
         textView.setError(null);
-        if(spinner.getSelectedItem().toString().equals(value)){
+        if(spinner.getSelectedItem().toString().equals(StringUtils.EMPTY)){
             //SpinnerAdapter adapter = spinner.getAdapter();
             textView.setVisibility(View.VISIBLE);
             textView.setError(REQUIRED_FIELD);

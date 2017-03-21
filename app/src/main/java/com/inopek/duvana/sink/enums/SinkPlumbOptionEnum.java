@@ -22,6 +22,15 @@ public enum SinkPlumbOptionEnum {
         throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", label));
     }
 
+    public static SinkPlumbOptionEnum getSinkPlumbEnumById(Long id) {
+        if (YES.getId().equals(id)) {
+            return SinkPlumbOptionEnum.YES;
+        } else if (NO.getId().equals(id)) {
+            return SinkPlumbOptionEnum.NO;
+        }
+        throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", id));
+    }
+
     public Long getId() {
         return id;
     }

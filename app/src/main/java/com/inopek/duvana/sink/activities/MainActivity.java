@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void editIntent() {
-        startActivity(new Intent(this, SinkEditActivity.class));
+        startActivity(new Intent(this, SinkSearchActivity.class));
     }
 
     private Intent getSettingActivityIntent() {

@@ -5,10 +5,14 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.inopek.duvana.sink.R;
+import com.inopek.duvana.sink.activities.SinkEditionActivity;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.tasks.HttpRequestDeleteSinkTask;
@@ -49,6 +53,7 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
             @Override
             public void onClick(View view) {
                 // open edition
+                edition(sinkBean);
             }
         });
 
@@ -58,6 +63,14 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
                 createDeleteAlertDialog(sinkBean);
             }
         });
+    }
+
+    private void edition(SinkBean sinkBean) {
+        Intent intent = new Intent(activity, SinkEditionActivity.class);
+        Gson gson = new GsonBuilder().create();
+        String jsonObject = gson.toJson(sinkBean, SinkBean.class);
+        intent.putExtra("sinkBean", jsonObject);
+        activity.startActivity(intent);
     }
 
     private void createDeleteAlertDialog(final SinkBean sinkBean) {

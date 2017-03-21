@@ -25,6 +25,17 @@ public enum SinkDiameterEnum {
         throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", label));
     }
 
+    public static SinkDiameterEnum getSinkDiameterEnumById(Long id) {
+        if (EIGHT.getId().equals(id)) {
+            return SinkDiameterEnum.EIGHT;
+        } else if (TEN.getId().equals(id)) {
+            return SinkDiameterEnum.TEN;
+        } else if (TWELVE.getId().equals(id)) {
+            return SinkDiameterEnum.TWELVE;
+        }
+        throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", id));
+    }
+
     public Long getId() {
         return id;
     }

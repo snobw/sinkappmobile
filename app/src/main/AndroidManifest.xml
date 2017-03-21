@@ -56,7 +56,12 @@
                 <action android:name="android.intent.action.INSERT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.inopek.duvana.sink.activities.SinkEditActivity">
+        <activity android:name="com.inopek.duvana.sink.activities.SinkSearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.inopek.duvana.sink.activities.SinkEditionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
             </intent-filter>

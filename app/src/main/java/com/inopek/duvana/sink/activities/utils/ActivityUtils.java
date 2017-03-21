@@ -5,12 +5,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.inopek.duvana.sink.R;
+import com.inopek.duvana.sink.adapters.SpinnerArrayAdapter;
 import com.inopek.duvana.sink.beans.ClientBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.beans.UserBean;
@@ -18,6 +18,8 @@ import com.inopek.duvana.sink.enums.SinkDiameterEnum;
 import com.inopek.duvana.sink.enums.SinkPlumbOptionEnum;
 import com.inopek.duvana.sink.enums.SinkStatusEnum;
 import com.inopek.duvana.sink.enums.SinkTypeEnum;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,23 +37,23 @@ public final class ActivityUtils {
     }
 
     public static void initTypeSpinner(Spinner spinner, Context context, String defaultMessage) {
-        List<String> types = Arrays.asList(defaultMessage, SinkTypeEnum.COVENTIONAL.getLabel(), SinkTypeEnum.LATERAL.getLabel(), SinkTypeEnum.TRANSVERSAL.getLabel());
-        mapSpinner(spinner, types, context);
+        List<String> types = Arrays.asList(StringUtils.EMPTY, SinkTypeEnum.COVENTIONAL.getLabel(), SinkTypeEnum.LATERAL.getLabel(), SinkTypeEnum.TRANSVERSAL.getLabel());
+        spinner.setAdapter(new SpinnerArrayAdapter(context, types));
     }
 
     public static void initStateSpinner(Spinner spinner, Context context, String defaultMessage) {
-        List<String> status = Arrays.asList(defaultMessage, SinkStatusEnum.BAD.getLabel(), SinkStatusEnum.GOOD.getLabel(), SinkStatusEnum.MODERATE.getLabel());
-        mapSpinner(spinner, status, context);
+        List<String> status = Arrays.asList(StringUtils.EMPTY, SinkStatusEnum.BAD.getLabel(), SinkStatusEnum.GOOD.getLabel(), SinkStatusEnum.MODERATE.getLabel());
+        spinner.setAdapter(new SpinnerArrayAdapter(context, status));
     }
 
     public static void initDiameterSpinner(Spinner spinner, Context context, String defaultMessage) {
-        List<String> diameters = Arrays.asList(defaultMessage, SinkDiameterEnum.EIGHT.getLabel(), SinkDiameterEnum.TEN.getLabel(), SinkDiameterEnum.TWELVE.getLabel());
-        mapSpinner(spinner, diameters, context);
+        List<String> diameters = Arrays.asList(StringUtils.EMPTY, SinkDiameterEnum.EIGHT.getLabel(), SinkDiameterEnum.TEN.getLabel(), SinkDiameterEnum.TWELVE.getLabel());
+        spinner.setAdapter(new SpinnerArrayAdapter(context, diameters));
     }
 
     public static void initPlumbSpinner(Spinner spinner, Context context, String defaultMessage) {
-        List<String> options = Arrays.asList(defaultMessage, SinkPlumbOptionEnum.YES.getLabel(), SinkPlumbOptionEnum.NO.getLabel());
-        mapSpinner(spinner, options, context);
+        List<String> options = Arrays.asList(StringUtils.EMPTY, SinkPlumbOptionEnum.YES.getLabel(), SinkPlumbOptionEnum.NO.getLabel());
+        spinner.setAdapter(new SpinnerArrayAdapter(context, options));
     }
 
     public static ProgressDialog createProgressDialog(String message, final Activity activity) {

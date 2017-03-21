@@ -25,6 +25,17 @@ public enum SinkTypeEnum {
         throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", label));
     }
 
+    public static SinkTypeEnum getSinkTypeEnumById(Long id) {
+        if (LATERAL.getId().equals(id)) {
+            return SinkTypeEnum.LATERAL;
+        } else if (COVENTIONAL.getId().equals(id)) {
+            return SinkTypeEnum.COVENTIONAL;
+        } else if (TRANSVERSAL.getId().equals(id)) {
+            return SinkTypeEnum.TRANSVERSAL;
+        }
+        throw new IllegalArgumentException(String.format("La valeur %s n'est pas definie", id));
+    }
+
     public Long getId() {
         return id;
     }

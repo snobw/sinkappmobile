@@ -4,7 +4,7 @@ import com.inopek.duvana.sink.activities.AbstractCreationActivity;
 import com.inopek.duvana.sink.activities.MainActivity;
 import com.inopek.duvana.sink.activities.SinkBeforeCreationActivity;
 import com.inopek.duvana.sink.activities.SinkCreationActivity;
-import com.inopek.duvana.sink.activities.SinkEditActivity;
+import com.inopek.duvana.sink.activities.SinkSearchActivity;
 import com.inopek.duvana.sink.activities.SinkSendActivity;
 import com.inopek.duvana.sink.modules.AppModule;
 
@@ -21,7 +21,7 @@ public interface AppComponent {
 
     void inject(SinkBeforeCreationActivity activity);
 
-    void inject(SinkEditActivity activity);
+    void inject(SinkSearchActivity activity);
 
     void inject(AbstractCreationActivity activity);
 }

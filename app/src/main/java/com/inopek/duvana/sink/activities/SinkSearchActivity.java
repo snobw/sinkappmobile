@@ -2,6 +2,7 @@ package com.inopek.duvana.sink.activities;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +29,7 @@ import javax.inject.Inject;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
 import static com.inopek.duvana.sink.constants.SinkConstants.DATE_FORMAT_DD_MM_YYYY;
 
-public class SinkEditActivity extends AppCompatActivity {
+public class SinkSearchActivity extends AppCompatActivity {
 
     private SinkBeanEditionAdapter adapter;
 
@@ -38,7 +39,7 @@ public class SinkEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sink_edit);
+        setContentView(R.layout.activity_sink_search);
         // inject dependecies
         initDatesAndDatesListeners();
         addSearchListener();
@@ -109,6 +110,7 @@ public class SinkEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog);
                 newFragment.setDateText(startDate);
                 newFragment.show(getSupportFragmentManager(), "datePicker");
             }

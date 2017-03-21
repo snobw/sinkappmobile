@@ -16,17 +16,20 @@ public class HttpRequestSendBeanTask extends AbstractHttpRequestTask<Long> {
 
     private SinkBean sink;
     private boolean checkExists;
+    private boolean updateAll;
 
-    public HttpRequestSendBeanTask(SinkBean sink, Context context, UserBean userBean, boolean checkExists) {
+    public HttpRequestSendBeanTask(SinkBean sink, Context context, UserBean userBean, boolean checkExists, boolean updateAll) {
         super(context, userBean);
         this.sink = sink;
         this.checkExists = checkExists;
+        this.updateAll = updateAll;
     }
 
     @Override
     protected Long post(RestTemplate restTemplate, String url, Map<String, String> mapVariables) {
         mapVariables.put("checkReferenceExits", Boolean.toString(checkExists));
-        url += "/{checkReferenceExits}";
+        mapVariables.put("updateAll", Boolean.toString(updateAll));
+        url += "/{checkReferenceExits}/{updateAll}";
         return restTemplate.postForObject(url, sink, Long.class, mapVariables);
     }
 

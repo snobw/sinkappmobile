@@ -116,7 +116,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
 
     private void runTask(final SinkBean sink, final boolean checkReferenceExists) {
 
-        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists) {
+        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists, false) {
 
             ProgressDialog dialog;
             @Override
@@ -230,7 +230,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
         Spinner spinner = (Spinner) findViewById(R.id.stateSpinner);
         TextView textView = (TextView) findViewById(R.id.stateErrorTextView);
         textView.setVisibility(View.INVISIBLE);
-        if (isValidSpinner(spinner, getString(R.string.state_default_message), textView)) {
+        if (isValidSpinner(spinner, textView)) {
             String selectedItem = (String) spinner.getSelectedItem();
             sinkBean.setSinkStatusId(SinkStatusEnum.getSinkStatutEnumByName(selectedItem).getId());
             return true;
@@ -243,7 +243,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
         Spinner spinner = (Spinner) findViewById(R.id.typeSpinner);
         TextView textView = (TextView) findViewById(R.id.typeErrorTextView);
         textView.setVisibility(View.INVISIBLE);
-        if (isValidSpinner(spinner, getString(R.string.type_default_message), textView)) {
+        if (isValidSpinner(spinner, textView)) {
             String selectedItem = (String) spinner.getSelectedItem();
             SinkTypeEnum sinkTypeEnum = SinkTypeEnum.getSinkTypeEnum(selectedItem);
             if (Arrays.asList(SinkTypeEnum.LATERAL, SinkTypeEnum.TRANSVERSAL).contains(sinkTypeEnum)) {
@@ -265,7 +265,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
         Spinner spinner = (Spinner) findViewById(R.id.diameterSpinner);
         TextView textView = (TextView) findViewById(R.id.diameterErrorTextView);
         textView.setVisibility(View.INVISIBLE);
-        if (isValidSpinner(spinner, getString(R.string.diameter_default_message), textView)) {
+        if (isValidSpinner(spinner, textView)) {
             String selectedItem = (String) spinner.getSelectedItem();
             sinkBean.setPipeLineDiameterId(SinkDiameterEnum.getSinkDiameterEnum(selectedItem).getId());
             return true;
@@ -277,7 +277,7 @@ public class SinkCreationActivity extends AbstractCreationActivity implements Go
         Spinner spinner = (Spinner) findViewById(R.id.plumbSpinner);
         TextView textView = (TextView) findViewById(R.id.plumbErrorTextView);
         textView.setVisibility(View.INVISIBLE);
-        if (isValidSpinner(spinner, getString(R.string.plumb_default_message), textView)) {
+        if (isValidSpinner(spinner, textView)) {
             String selectedItem = (String) spinner.getSelectedItem();
             SinkPlumbOptionEnum sinkPlumbOptionEnum = SinkPlumbOptionEnum.getSinkPlumbEnum(selectedItem);
             if (SinkPlumbOptionEnum.YES.equals(sinkPlumbOptionEnum)) {
