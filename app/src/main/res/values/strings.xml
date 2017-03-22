@@ -10,6 +10,7 @@
     <string name="settings.title"><u>Configure las siguientes preferencias antes de comenzar</u></string>
     <string name="profile.title"><u>Perfil del usuario :</u></string>
     <string name="client.title"><u>Cliente :</u></string>
+    <string name="choice.image.default.message">Elija la fuente de su imagen</string>
     <string name="camera.default.message">Camara</string>
     <string name="galery.default.message">Galeria</string>
     <string name="photo.choice.default.message">Seleccionar desde</string>
