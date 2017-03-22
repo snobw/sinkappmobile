@@ -2,7 +2,6 @@ package com.inopek.duvana.sink.activities;
 
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,9 +13,9 @@ import com.inopek.duvana.sink.beans.SinkBean;
 
 import java.util.Date;
 
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.hasText;
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.photoExists;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.setDefaultClient;
-import static com.inopek.duvana.sink.services.CustomServiceUtils.hasText;
-import static com.inopek.duvana.sink.services.CustomServiceUtils.photoExists;
 
 public class SinkBeforeCreationActivity extends AbstractCreationActivity {
 
@@ -32,7 +31,7 @@ public class SinkBeforeCreationActivity extends AbstractCreationActivity {
     protected boolean createSinkBean(SinkBean sinkBean) {
 
         EditText referenceText = (EditText) findViewById(R.id.referenceTxt);
-        boolean referenceExist = hasText(referenceText, "");
+        boolean referenceExist = hasText(referenceText, (EditText) findViewById(R.id.referenceTxtTitle));
 
         Bitmap imageViewBeforeDrawingCache = getImageView().getDrawingCache();
         if (imageViewBeforeDrawingCache != null) {

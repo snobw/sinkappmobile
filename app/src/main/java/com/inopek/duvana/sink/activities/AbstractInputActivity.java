@@ -38,16 +38,16 @@ import com.inopek.duvana.sink.utils.AddressUtils;
 
 import java.util.Arrays;
 
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.hasText;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initDiameterSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initPlumbSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initStateSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.initTypeSpinner;
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.isNumeric;
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.isValidSpinner;
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.photoExists;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.setDefaultClient;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
-import static com.inopek.duvana.sink.services.CustomServiceUtils.hasText;
-import static com.inopek.duvana.sink.services.CustomServiceUtils.isNumeric;
-import static com.inopek.duvana.sink.services.CustomServiceUtils.isValidSpinner;
-import static com.inopek.duvana.sink.services.CustomServiceUtils.photoExists;
 
 public abstract class AbstractInputActivity extends AbstractCreationActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
@@ -69,13 +69,13 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         addSendButtonListener();
         addSaveSendLaterButtonListener((Button) findViewById(R.id.saveAndSendLaterButton));
         Context context = getBaseContext();
-        initTypeSpinner(getTypeSpinner(), context, getString(R.string.type_default_message));
-        initStateSpinner(getStatusSpinner(), context, getString(R.string.state_default_message));
-        initDiameterSpinner(getDiameterSpinner(), context, getString(R.string.diameter_default_message));
-        initPlumbSpinner(getPlumbSpinner(), context, getString(R.string.plumb_default_message));
+        initTypeSpinner(getTypeSpinner(), context);
+        initStateSpinner(getStatusSpinner(), context);
+        initDiameterSpinner(getDiameterSpinner(), context);
+        initPlumbSpinner(getPlumbSpinner(), context);
         initLocationRequest();
         String extra = getIntent().getStringExtra("sinkBean");
-        if(extra != null) {
+        if (extra != null) {
             populateFromExtras(extra);
         }
     }
@@ -112,8 +112,7 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
 
     private boolean isValidSinkStatusEnum(SinkBean sinkBean) {
         Spinner spinner = getStatusSpinner();
-        TextView textView = (TextView) findViewById(R.id.stateErrorTextView);
-        textView.setVisibility(View.INVISIBLE);
+        TextView textView = (TextView) findViewById(R.id.stateTitle);
         if (isValidSpinner(spinner, textView)) {
             String selectedItem = (String) spinner.getSelectedItem();
             sinkBean.setSinkStatusId(SinkStatusEnum.getSinkStatutEnumByName(selectedItem).getId());
@@ -125,14 +124,12 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
     private boolean isValidSinkTypeEnum(SinkBean sinkBean) {
 
         Spinner spinner = getTypeSpinner();
-        TextView textView = (TextView) findViewById(R.id.typeErrorTextView);
-        textView.setVisibility(View.INVISIBLE);
-        if (isValidSpinner(getTypeSpinner(), textView)) {
+        if (isValidSpinner(getTypeSpinner(), (TextView) findViewById(R.id.typeTitle))) {
             String selectedItem = (String) spinner.getSelectedItem();
             SinkTypeEnum sinkTypeEnum = SinkTypeEnum.getSinkTypeEnum(selectedItem);
             if (Arrays.asList(SinkTypeEnum.LATERAL, SinkTypeEnum.TRANSVERSAL).contains(sinkTypeEnum)) {
                 EditText lengthText = getLengthEditText();
-                boolean lengthExists = isNumeric(lengthText, getString(R.string.length_default_message));
+                boolean lengthExists = isNumeric(lengthText, (EditText) findViewById(R.id.lengthTitle));
                 if (lengthExists) {
                     sinkBean.setLength(Long.valueOf(lengthText.getText().toString().trim()));
                 } else {
@@ -147,9 +144,7 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
 
     private boolean isValidSinkDiameterEnum(SinkBean sinkBean) {
         Spinner spinner = getDiameterSpinner();
-        TextView textView = (TextView) findViewById(R.id.diameterErrorTextView);
-        textView.setVisibility(View.INVISIBLE);
-        if (isValidSpinner(spinner, textView)) {
+        if (isValidSpinner(spinner, (TextView) findViewById(R.id.diameterTitle))) {
             String selectedItem = (String) spinner.getSelectedItem();
             sinkBean.setPipeLineDiameterId(SinkDiameterEnum.getSinkDiameterEnum(selectedItem).getId());
             return true;
@@ -159,14 +154,12 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
 
     private boolean isValidSinkPlumbEnum(SinkBean sinkBean) {
         Spinner spinner = getPlumbSpinner();
-        TextView textView = (TextView) findViewById(R.id.plumbErrorTextView);
-        textView.setVisibility(View.INVISIBLE);
-        if (isValidSpinner(spinner, textView)) {
+        if (isValidSpinner(spinner, (TextView) findViewById(R.id.plumbOptionTitle))) {
             String selectedItem = (String) spinner.getSelectedItem();
             SinkPlumbOptionEnum sinkPlumbOptionEnum = SinkPlumbOptionEnum.getSinkPlumbEnum(selectedItem);
             if (SinkPlumbOptionEnum.YES.equals(sinkPlumbOptionEnum)) {
                 EditText pipeLineLengthText = getPipelineLengthEditText();
-                boolean lengthExists = isNumeric(pipeLineLengthText, getString(R.string.length_default_message));
+                boolean lengthExists = isNumeric(pipeLineLengthText, (EditText) findViewById(R.id.pipelineLengthTitle));
                 if (lengthExists) {
                     sinkBean.setPipeLineLength(Long.valueOf(pipeLineLengthText.getText().toString().trim()));
                 } else {
@@ -181,7 +174,7 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
 
     private boolean referenceExists(SinkBean sinkBean) {
 
-        boolean referenceExist = hasText(getReferenceEditText(), getString(R.string.reference_default_message));
+        boolean referenceExist = hasText(getReferenceEditText(), (EditText) findViewById(R.id.referenceTitle));
 
         if (referenceExist) {
             sinkBean.setReference(getReferenceEditText().getText().toString());
@@ -209,13 +202,14 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists, updateAll) {
 
             ProgressDialog dialog;
+
             @Override
             protected void onPostExecute(Long id) {
                 dialog.dismiss();
 
                 if (id == null) {
                     showToastMessage(getString(R.string.try_later_message), getBaseContext());
-                } else if(id == 0L) {
+                } else if (id == 0L) {
                     createAlertReferenceDialog(sink);
                 } else {
                     showToastMessage(getString(R.string.success_save_message), getBaseContext());
@@ -280,15 +274,15 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
     }
 
     protected EditText getReferenceEditText() {
-        return  (EditText) findViewById(R.id.referenceTxt);
+        return (EditText) findViewById(R.id.referenceTxt);
     }
 
     protected EditText getAdresseeEditText() {
-        return  (EditText) findViewById(R.id.addressTxt);
+        return (EditText) findViewById(R.id.addressTxt);
     }
 
     protected EditText getNeighborhoodEditText() {
-        return  (EditText) findViewById(R.id.neighborhoodTxt);
+        return (EditText) findViewById(R.id.neighborhoodTxt);
     }
 
     protected EditText getLengthEditText() {
@@ -362,12 +356,14 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
     @NonNull
     private AddressBean getAddressBean() {
         if (addressBean == null) {
-            addressBean = AddressUtils.initAddressBeanFromUI(getBaseContext(),
-                    (EditText) findViewById(R.id.addressTxt),
-                    (EditText) findViewById(R.id.neighborhoodTxt),
-                    getString(R.string.address_default_message),
-                    getString(R.string.neighborhood_default_message));
+            addressBean = new AddressBean();
         }
+        AddressUtils.validateAddressFields(getBaseContext(),
+                (EditText) findViewById(R.id.addressTxt),
+                (EditText) findViewById(R.id.neighborhoodTxt),
+                (EditText) findViewById(R.id.addressTitle),
+                (EditText) findViewById(R.id.neighborhoodTitle), addressBean);
+
         return addressBean;
     }
 
