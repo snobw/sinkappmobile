@@ -61,6 +61,11 @@ public class SinkBeforeCreationActivity extends AbstractCreationActivity {
         return (TextView) findViewById(R.id.imageBeforeTextView);
     }
 
+    @Override
+    protected SinkBean getSinkBeanToSave() {
+        return new SinkBean();
+    }
+
     private void setClient(SinkBean sinkBean) {
         setDefaultClient(sinkBean, this, getString(R.string.client_name_preference));
     }

@@ -20,7 +20,6 @@ import java.util.Date;
 
 public class SinkEditionActivity extends AbstractInputActivity {
 
-    private Long id;
     private SinkBean sinkBean;
 
     @Override
@@ -35,7 +34,6 @@ public class SinkEditionActivity extends AbstractInputActivity {
         Gson gson = new GsonBuilder().create();
         sinkBean = gson.fromJson(extra, SinkBean.class);
         if (sinkBean != null) {
-            id = sinkBean.getId();
             populate(sinkBean);
         }
     }
@@ -95,4 +93,8 @@ public class SinkEditionActivity extends AbstractInputActivity {
         }
     }
 
+    @Override
+    protected SinkBean getSinkBeanToSave() {
+        return sinkBean;
+    }
 }

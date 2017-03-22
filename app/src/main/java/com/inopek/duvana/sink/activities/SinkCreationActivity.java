@@ -24,4 +24,8 @@ public class SinkCreationActivity extends AbstractInputActivity {
         sinkBean.setSinkCreationDate(new Date());
     }
 
+    @Override
+    protected SinkBean getSinkBeanToSave() {
+        return new SinkBean();
+    }
 }

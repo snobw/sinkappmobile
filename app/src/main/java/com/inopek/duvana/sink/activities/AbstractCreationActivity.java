@@ -37,6 +37,8 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
 
     protected abstract TextView getTextViewImage();
 
+    protected abstract SinkBean getSinkBeanToSave();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SinkBean sinkBean = new SinkBean();
+                SinkBean sinkBean = getSinkBeanToSave();
                 Context context = getBaseContext();
                 if (createSinkBean(sinkBean)) {
                     boolean fileCreated = customService.createAndSaveFile(sinkBean, getBaseContext());
