@@ -1,10 +1,12 @@
 package com.inopek.duvana.sink.activities;
 
 import android.graphics.Bitmap;
+import android.view.View;
 import android.widget.Spinner;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.adapters.SpinnerArrayAdapter;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.enums.SinkDiameterEnum;
@@ -15,6 +17,7 @@ import com.inopek.duvana.sink.services.CustomServiceUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.util.Date;
 
 
@@ -35,6 +38,13 @@ public class SinkEditionActivity extends AbstractInputActivity {
         sinkBean = gson.fromJson(extra, SinkBean.class);
         if (sinkBean != null) {
             populate(sinkBean);
+        }
+        if(sinkBean.getFileName() != null) {
+            File file = new File(sinkBean.getFileName());
+            if (file.isFile()) {
+                View saveButton = findViewById(R.id.sendButton);
+                saveButton.setEnabled(false);
+            }
         }
     }
 

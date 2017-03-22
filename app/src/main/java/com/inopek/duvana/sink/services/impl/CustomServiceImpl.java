@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -90,7 +91,7 @@ public class CustomServiceImpl implements CustomService {
             createSinkBeansFromFile(sinkBeans, files);
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Log.e("CustomServiceImpl", "Error while reading file " + ex.getMessage());
         }
         return sinkBeans;
     }
@@ -115,8 +116,8 @@ public class CustomServiceImpl implements CustomService {
             };
             File[] myFiles = directory.listFiles(filter);
             createSinkBeansFromFile(sinkBeans, myFiles);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            Log.e("CustomServiceImpl", "Error while reading file " + ex.getMessage());
         }
 
         return sinkBeans;
