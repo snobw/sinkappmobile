@@ -6,6 +6,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,12 +18,21 @@ import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.SinkEditionActivity;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.beans.SinkBean;
+import com.inopek.duvana.sink.constants.SinkConstants;
 import com.inopek.duvana.sink.tasks.HttpRequestDeleteSinkTask;
+import com.inopek.duvana.sink.utils.DateUtils;
+import com.inopek.duvana.sink.utils.PropertiesUtils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
+import static android.util.Base64.DEFAULT;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
 
 public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
@@ -66,11 +78,47 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
     }
 
     private void edition(SinkBean sinkBean) {
+        String afterImageTmpPath;
+        if (sinkBean.getImageAfter() != null && sinkBean.getReference() != null) {
+            afterImageTmpPath = saveImage(sinkBean.getImageAfter(), sinkBean.getReference());
+            sinkBean.setImageAfter(afterImageTmpPath);
+        }
         Intent intent = new Intent(activity, SinkEditionActivity.class);
         Gson gson = new GsonBuilder().create();
         String jsonObject = gson.toJson(sinkBean, SinkBean.class);
         intent.putExtra("sinkBean", jsonObject);
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent, SinkConstants.EDITION_ACTIVITY_REQUEST_CODE);
+    }
+
+    private String saveImage(String base64, String reference) {
+        try {
+            DateTime dateTime = new DateTime();
+            byte[] bytes = Base64.decode(base64, DEFAULT);
+            String fileName = reference + DateUtils.dateToString(dateTime, SinkConstants.DATE_FORMAT_YYYT_MM_DD);
+            String path = Environment.getExternalStorageDirectory() + PropertiesUtils.getProperty("duvana.app.cache.path.images", getContext()) + File.separator;
+            File dir = new File(path);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            path += fileName + ".png";
+            File imageFile = new File(path);
+            //File imageFile = File.createTempFile(fileName, null, getContext().getCacheDir());
+            try (OutputStream stream = new FileOutputStream(imageFile)) {
+                stream.write(bytes);
+                stream.close();
+            }
+            return imageFile.getAbsolutePath();
+        } catch (IOException e) {
+            Log.e("SinkBeanEditionAdapter", e.getMessage());
+        } catch (IllegalArgumentException ex) {
+            Log.e("SinkBeanEditionAdapter", ex.getMessage());
+            File imageFile = new File(base64);
+            if (imageFile.exists()) {
+                return base64;
+            }
+        }
+
+        return null;
     }
 
     private void createDeleteAlertDialog(final SinkBean sinkBean) {
@@ -80,7 +128,14 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
                 switch (choice) {
                     case DialogInterface.BUTTON_POSITIVE:
                         // delete task
-                        runDeleteTask(sinkBean);
+                        File file = new File(sinkBean.getFileName());
+                        if (file.exists()) {
+                            file.delete();
+                            removeSink(sinkBean);
+                            notifyDataSetChanged();
+                        } else {
+                            runDeleteTask(sinkBean);
+                        }
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -95,8 +150,8 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
     }
 
     private void runDeleteTask(final SinkBean sinkBean) {
-        if(sinkBean == null) {
-            showToastMessage(getContext().getString(R.string.date_start_error_message), activity);
+        if (sinkBean == null) {
+            showToastMessage(getContext().getString(R.string.delete_try_later_message), activity);
         } else {
             new HttpRequestDeleteSinkTask(sinkBean, getContext()) {
 

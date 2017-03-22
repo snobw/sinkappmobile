@@ -1,6 +1,7 @@
 package com.inopek.duvana.sink.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -50,21 +51,38 @@ public class SinkSearchActivity extends AppCompatActivity {
         addSearchListener();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(SinkConstants.EDITION_ACTIVITY_REQUEST_CODE == requestCode && SinkConstants.EDITION_ACTIVITY_RESULT_CODE == resultCode ) {
+            launchSearch();
+        }
+    }
+
     private void addSearchListener() {
         Button searchButton = (Button) findViewById(R.id.searchButton);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // search items and populate
-                EditText startDateEditText = (EditText) findViewById(R.id.dateStartButton);
-                EditText endDateEditText = (EditText) findViewById(R.id.dateEndButton);
-                runSearchTask(startDateEditText.getText().toString(), endDateEditText.getText().toString());
+                launchSearch();
             }
         });
     }
 
-    private void runSearchTask(final String startDate, final String endDate) {
-        final List<SinkBean> sinksFound = new ArrayList<>();
+    private void launchSearch() {
+        EditText startDateEditText = (EditText) findViewById(R.id.dateStartButton);
+        EditText endDateEditText = (EditText) findViewById(R.id.dateEndButton);
+        // search local files first
+        List<SinkBean> sinksFound = new ArrayList<>();
+        String startDateStr = startDateEditText.getText().toString();
+        String endDateStr = endDateEditText.getText().toString();
+        findLocalSinks(startDateStr, endDateStr, sinksFound);
+        // then lauch search distant
+        runSearchTask(startDateStr, endDateStr, sinksFound);
+    }
+
+    private void runSearchTask(final String startDate, final String endDate, final List<SinkBean> sinksFound) {
         if(startDate == null) {
             showToastMessage(getString(R.string.date_start_error_message), getBaseContext());
         } else {
@@ -93,7 +111,6 @@ public class SinkSearchActivity extends AppCompatActivity {
                 @Override
                 protected void onPreExecute() {
                     dialog = createDialog();
-                    findLocalSinks(startDate, endDate, sinksFound);
                 }
             }.execute();
         }
@@ -149,5 +166,4 @@ public class SinkSearchActivity extends AppCompatActivity {
             }
         });
     }
-
 }

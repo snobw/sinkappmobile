@@ -212,7 +212,7 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
                 } else if (id == 0L) {
                     createAlertReferenceDialog(sink);
                 } else {
-                    showToastMessage(getString(R.string.success_save_message), getBaseContext());
+                    setResultActivity();
                     finish();
                 }
             }

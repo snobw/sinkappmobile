@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.beans.SinkBean;
+import com.inopek.duvana.sink.constants.SinkConstants;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
 import com.inopek.duvana.sink.utils.ImageUtils;
@@ -62,7 +63,7 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                 if (createSinkBean(sinkBean)) {
                     boolean fileCreated = customService.createAndSaveFile(sinkBean, getBaseContext());
                     if (fileCreated) {
-                        ActivityUtils.showToastMessage(getString(R.string.success_save_message), context);
+                        setResultActivity();
                         finish();
                     } else {
                         ActivityUtils.showToastMessage(getString(R.string.try_later_message), context);
@@ -73,6 +74,15 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    protected void setResultActivity() {
+        ActivityUtils.showToastMessage(getString(R.string.success_save_message), getBaseContext());
+        if (getParent() == null) {
+            setResult(SinkConstants.EDITION_ACTIVITY_RESULT_CODE, new Intent());
+        } else {
+            getParent().setResult(SinkConstants.EDITION_ACTIVITY_RESULT_CODE, new Intent());
+        }
     }
 
     protected void addCameraButtonListener(Button cameraButton) {

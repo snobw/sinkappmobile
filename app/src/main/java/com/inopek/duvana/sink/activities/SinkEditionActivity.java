@@ -1,6 +1,7 @@
 package com.inopek.duvana.sink.activities;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.Spinner;
 
@@ -13,7 +14,6 @@ import com.inopek.duvana.sink.enums.SinkDiameterEnum;
 import com.inopek.duvana.sink.enums.SinkPlumbOptionEnum;
 import com.inopek.duvana.sink.enums.SinkStatusEnum;
 import com.inopek.duvana.sink.enums.SinkTypeEnum;
-import com.inopek.duvana.sink.services.CustomServiceUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,13 +39,23 @@ public class SinkEditionActivity extends AbstractInputActivity {
         if (sinkBean != null) {
             populate(sinkBean);
         }
-        if(sinkBean.getFileName() != null) {
+        if (sinkBean.getFileName() != null) {
             File file = new File(sinkBean.getFileName());
             if (file.isFile()) {
-                View saveButton = findViewById(R.id.sendButton);
-                saveButton.setEnabled(false);
+                View sendButton = findViewById(R.id.sendButton);
+                sendButton.setVisibility(View.GONE);
+            } else {
+                hideSaveButton();
             }
+        } else {
+            hideSaveButton();
         }
+        getReferenceEditText().setEnabled(false);
+    }
+
+    private void hideSaveButton() {
+        View saveButton = findViewById(R.id.saveAndSendLaterButton);
+        saveButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -95,11 +105,28 @@ public class SinkEditionActivity extends AbstractInputActivity {
         plumbSpinner.setSelection(positionForItem);
     }
 
-    private void populatePhotoAfter(SinkBean sinkBean) {
-        if(sinkBean.getImageAfter() != null) {
-            Bitmap bitmap = CustomServiceUtils.decodeBase64(sinkBean.getImageAfter());
-            getImageView().setImageBitmap(bitmap);
-            getImageView().setDrawingCacheEnabled(true);
+    private void populatePhotoAfter(final SinkBean sinkBean) {
+        if (sinkBean.getImageAfter() != null) {
+            new Thread(new Runnable() {
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // This code will always run on the UI thread, therefore is safe to modify UI elements.
+                            // search file
+                            File imageFile = new File(sinkBean.getImageAfter());
+                            if (imageFile.exists()) {
+                                BitmapFactory.Options options = new BitmapFactory.Options();
+                                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                                Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+                                getImageView().setImageBitmap(bitmap);
+                                getImageView().setDrawingCacheEnabled(true);
+                            }
+                        }
+                    });
+                }
+
+            }).start();
         }
     }
 

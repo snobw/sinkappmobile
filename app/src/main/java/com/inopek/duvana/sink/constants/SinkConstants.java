@@ -12,5 +12,7 @@ public final class SinkConstants {
     public static final String INTENT_EXTRA_FILE_NAME = "filaName";
     public static final String ENCODING_DEFAULT_NAME = "utf-8";
     public static final int PHOTO_REQUEST_CODE = 100;
+    public static final int EDITION_ACTIVITY_REQUEST_CODE = 200;
+    public static final int EDITION_ACTIVITY_RESULT_CODE = 200;
 
 }

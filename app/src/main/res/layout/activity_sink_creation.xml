@@ -398,10 +398,6 @@
                 android:text="@string/send.default.message"
                 android:textAllCaps="false" />
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
             <Button
                 android:id="@+id/saveAndSendLaterButton"
                 android:layout_width="match_parent"

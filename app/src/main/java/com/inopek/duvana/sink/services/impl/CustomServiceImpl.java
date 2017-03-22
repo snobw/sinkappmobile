@@ -52,16 +52,21 @@ public class CustomServiceImpl implements CustomService {
         try {
             Gson gson = new GsonBuilder().create();
             String toJson = gson.toJson(sinkBean, SinkBean.class);
-            String path = Environment.getExternalStorageDirectory() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context) + File.separator;
-            File dir = new File(path);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            path += UUID.randomUUID().toString() + FILE_NAME_SEPARATOR + DateFormatUtils.format(new Date(), DATE_FORMAT_YYYT_MM_DD) + JSON_EXTENSION;
-            File data = new File(path);
-            if (!data.createNewFile()) {
-                data.delete();
-                data.createNewFile();
+            File data;
+            if(!fileExists(sinkBean)) {
+                String path = Environment.getExternalStorageDirectory() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context) + File.separator;
+                File dir = new File(path);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                path += UUID.randomUUID().toString() + FILE_NAME_SEPARATOR + DateFormatUtils.format(new Date(), DATE_FORMAT_YYYT_MM_DD) + JSON_EXTENSION;
+                data = new File(path);
+                if (!data.createNewFile()) {
+                    data.delete();
+                    data.createNewFile();
+                }
+            } else {
+                data = new File(sinkBean.getFileName());
             }
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(data), SinkConstants.ENCODING_DEFAULT_NAME));
             bw.write(toJson);
@@ -97,7 +102,7 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
-    public ArrayList<SinkBean> getAllSinksSaved(final Context context, final Date startDate, Date endDate) {
+    public ArrayList<SinkBean> getAllSinksSaved(final Context context, final Date startDate, final Date endDate) {
         ArrayList<SinkBean> sinkBeans = new ArrayList<>();
         try {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
@@ -108,7 +113,7 @@ public class CustomServiceImpl implements CustomService {
                         return false;
                     }
                     DateTime fileDate = new DateTime(file.lastModified()).withTimeAtStartOfDay();
-                    if ((fileDate.isAfter(startDate.getTime()) || fileDate.isEqual(startDate.getTime())) && (fileDate.isBefore(startDate.getTime()) || fileDate.isEqual(startDate.getTime()))) {
+                    if ((fileDate.isAfter(startDate.getTime()) || fileDate.isEqual(startDate.getTime())) && (fileDate.isBefore(endDate.getTime()) || fileDate.isEqual(endDate.getTime()))) {
                         return true;
                     }
                     return false;
@@ -140,4 +145,11 @@ public class CustomServiceImpl implements CustomService {
         }
     }
 
+    private boolean fileExists(SinkBean sinkBean) {
+        if(sinkBean.getFileName() != null) {
+            File file = new File(sinkBean.getFileName());
+            return file.isFile();
+        }
+        return false;
+    }
 }
