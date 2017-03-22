@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.inopek.duvana.sink.utils.PropertiesUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -93,7 +95,6 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
     private String saveImage(String base64, String reference) {
         try {
             DateTime dateTime = new DateTime();
-            byte[] bytes = Base64.decode(base64, DEFAULT);
             String fileName = reference + DateUtils.dateToString(dateTime, SinkConstants.DATE_FORMAT_YYYT_MM_DD);
             String path = Environment.getExternalStorageDirectory() + PropertiesUtils.getProperty("duvana.app.cache.path.images", getContext()) + File.separator;
             File dir = new File(path);
@@ -101,6 +102,12 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
                 dir.mkdirs();
             }
             path += fileName + ".png";
+            if(base64.contains(path)) {
+                // the path is already set, check file exist
+                return  getFilePath(base64);
+            }
+            // decode and create file
+            byte[] bytes = Base64.decode(base64, DEFAULT);
             File imageFile = new File(path);
             //File imageFile = File.createTempFile(fileName, null, getContext().getCacheDir());
             try (OutputStream stream = new FileOutputStream(imageFile)) {
@@ -110,14 +117,17 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
             return imageFile.getAbsolutePath();
         } catch (IOException e) {
             Log.e("SinkBeanEditionAdapter", e.getMessage());
-        } catch (IllegalArgumentException ex) {
-            Log.e("SinkBeanEditionAdapter", ex.getMessage());
-            File imageFile = new File(base64);
-            if (imageFile.exists()) {
-                return base64;
-            }
         }
 
+        return null;
+    }
+
+    @Nullable
+    private String getFilePath(String path) {
+        File imageFile = new File(path);
+        if (imageFile.exists()) {
+            return imageFile.getAbsolutePath();
+        }
         return null;
     }
 
