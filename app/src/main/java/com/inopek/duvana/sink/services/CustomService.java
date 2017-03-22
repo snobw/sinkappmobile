@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import com.inopek.duvana.sink.beans.SinkBean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public interface CustomService {
@@ -37,5 +38,10 @@ public interface CustomService {
      * @return
      */
     ArrayList<SinkBean> getAllSinksToSend(Context context);
+
+    /**
+     * @return
+     */
+    ArrayList<SinkBean> getAllSinksSaved(Context context, Date startDate, Date endDate);
 
 }

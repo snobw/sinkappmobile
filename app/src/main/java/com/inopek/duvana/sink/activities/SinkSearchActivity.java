@@ -13,15 +13,19 @@ import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.adapters.SinkBeanEditionAdapter;
 import com.inopek.duvana.sink.beans.SinkBean;
+import com.inopek.duvana.sink.constants.SinkConstants;
 import com.inopek.duvana.sink.fragment.DatePickerFragment;
+import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
 import com.inopek.duvana.sink.tasks.HttpRequestSearchSinkTask;
 import com.inopek.duvana.sink.utils.DateUtils;
 
 import org.joda.time.DateTime;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,6 +45,7 @@ public class SinkSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sink_search);
         // inject dependecies
+        Injector.getInstance().getAppComponent().inject(this);
         initDatesAndDatesListeners();
         addSearchListener();
     }
@@ -58,7 +63,8 @@ public class SinkSearchActivity extends AppCompatActivity {
         });
     }
 
-    private void runSearchTask(String startDate, String endDate) {
+    private void runSearchTask(final String startDate, final String endDate) {
+        final List<SinkBean> sinksFound = new ArrayList<>();
         if(startDate == null) {
             showToastMessage(getString(R.string.date_start_error_message), getBaseContext());
         } else {
@@ -70,8 +76,16 @@ public class SinkSearchActivity extends AppCompatActivity {
                 protected void onPostExecute(SinkBean[] sinkBean) {
                     dialog.dismiss();
                     if (sinkBean != null && sinkBean.length > 0) {
-                        populate(Arrays.asList(sinkBean));
-                    } else {
+                        List<SinkBean> sinksFromBase = Arrays.asList(sinkBean);
+                        if(!CollectionUtils.isEmpty(sinksFromBase)) {
+                            sinksFound.addAll(sinksFromBase);
+                        }
+                    }
+
+                    if(!CollectionUtils.isEmpty(sinksFound)) {
+                        populate(sinksFound);
+                    }
+                    else {
                         showToastMessage(getString(R.string.search_try_later_message), getBaseContext());
                     }
                 }
@@ -79,9 +93,19 @@ public class SinkSearchActivity extends AppCompatActivity {
                 @Override
                 protected void onPreExecute() {
                     dialog = createDialog();
+                    findLocalSinks(startDate, endDate, sinksFound);
                 }
             }.execute();
         }
+    }
+
+    private void findLocalSinks(String startDateStr, String endDateStr, List<SinkBean> sinksFound) {
+        Date startDate = DateUtils.parseDateFromString(startDateStr, SinkConstants.DATE_FORMAT_DD_MM_YYYY);
+        Date endDate = new DateTime().withTimeAtStartOfDay().toDate();
+        if(endDateStr == null) {
+            endDate = DateUtils.parseDateFromString(endDateStr, SinkConstants.DATE_FORMAT_DD_MM_YYYY);
+        }
+        sinksFound.addAll(customService.getAllSinksSaved(getBaseContext(), startDate, endDate));
     }
 
     private void populate(List<SinkBean> sinks) {

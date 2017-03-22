@@ -15,9 +15,11 @@ import com.inopek.duvana.sink.utils.PropertiesUtils;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.joda.time.DateTime;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,7 +30,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static com.inopek.duvana.sink.constants.SinkConstants.DATE_FORMAT_DD_MM_YYYY;
 import static com.inopek.duvana.sink.constants.SinkConstants.DATE_FORMAT_YYYT_MM_DD;
 import static com.inopek.duvana.sink.constants.SinkConstants.FILE_NAME_SEPARATOR;
 import static com.inopek.duvana.sink.constants.SinkConstants.JSON_EXTENSION;
@@ -83,27 +84,59 @@ public class CustomServiceImpl implements CustomService {
     public ArrayList<SinkBean> getAllSinksToSend(Context context) {
         ArrayList<SinkBean> sinkBeans = new ArrayList<>();
         try {
-            Reader reader;
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
             File directory = new File(path);
             File[] files = directory.listFiles();
-            if (ArrayUtils.isNotEmpty(files)) {
-                for (File file : files) {
-                    reader = new FileReader(file);
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-                    SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
-                    if (sinkBean != null) {
-                        sinkBean.setFileName(file.getAbsolutePath());
-                        sinkBeans.add(sinkBean);
-                    }
-                    reader.close();
-                }
-            }
+            createSinkBeansFromFile(sinkBeans, files);
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         return sinkBeans;
     }
+
+    @Override
+    public ArrayList<SinkBean> getAllSinksSaved(final Context context, final Date startDate, Date endDate) {
+        ArrayList<SinkBean> sinkBeans = new ArrayList<>();
+        try {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
+            File directory = new File(path);
+            FileFilter filter = new FileFilter() {
+                public boolean accept(File file) {
+                    if (!file.isFile()) {
+                        return false;
+                    }
+                    DateTime fileDate = new DateTime(file.lastModified()).withTimeAtStartOfDay();
+                    if ((fileDate.isAfter(startDate.getTime()) || fileDate.isEqual(startDate.getTime())) && (fileDate.isBefore(startDate.getTime()) || fileDate.isEqual(startDate.getTime()))) {
+                        return true;
+                    }
+                    return false;
+                }
+            };
+            File[] myFiles = directory.listFiles(filter);
+            createSinkBeansFromFile(sinkBeans, myFiles);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sinkBeans;
+    }
+
+    private void createSinkBeansFromFile(ArrayList<SinkBean> sinkBeans, File[] files) throws IOException {
+        Reader reader;
+        if (ArrayUtils.isNotEmpty(files)) {
+            for (File file : files) {
+                reader = new FileReader(file);
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
+                if (sinkBean != null) {
+                    sinkBean.setFileName(file.getAbsolutePath());
+                    sinkBeans.add(sinkBean);
+                }
+                reader.close();
+            }
+        }
+    }
+
 }
