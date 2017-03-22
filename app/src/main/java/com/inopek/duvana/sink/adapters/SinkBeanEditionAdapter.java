@@ -90,8 +90,8 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(getContext().getString(R.string.delete_ask_message) + StringUtils.SPACE + sinkBean.getReference())
-                .setPositiveButton("Si", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
+                .setPositiveButton(getContext().getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(getContext().getString(R.string.no), dialogClickListener).show();
     }
 
     private void runDeleteTask(final SinkBean sinkBean) {
