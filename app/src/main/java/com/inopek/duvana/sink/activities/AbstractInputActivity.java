@@ -277,7 +277,7 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         return (EditText) findViewById(R.id.referenceTxt);
     }
 
-    protected EditText getAdresseeEditText() {
+    protected EditText getAddressEditText() {
         return (EditText) findViewById(R.id.addressTxt);
     }
 
@@ -334,8 +334,8 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.reference_exists_save_message))
-                .setPositiveButton("Si", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
+                .setPositiveButton(R.string.yes, dialogClickListener)
+                .setNegativeButton(R.string.no, dialogClickListener).show();
     }
 
     private void addSendButtonListener() {

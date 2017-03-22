@@ -47,7 +47,7 @@ public class SinkEditionActivity extends AbstractInputActivity {
 
     private void populate(SinkBean sinkBean) {
         getReferenceEditText().setText(sinkBean.getReference());
-        getAdresseeEditText().setText(sinkBean.getAddress() != null ? sinkBean.getAddress().getStreet() : StringUtils.EMPTY);
+        getAddressEditText().setText(sinkBean.getAddress() != null ? sinkBean.getAddress().getStreet() : StringUtils.EMPTY);
         getNeighborhoodEditText().setText(sinkBean.getAddress() != null ? sinkBean.getAddress().getNeighborhood() : StringUtils.EMPTY);
         getLengthEditText().setText(sinkBean.getLength() != null ? String.valueOf(sinkBean.getLength()) : StringUtils.EMPTY);
         getPipelineLengthEditText().setText(sinkBean.getPipeLineLength() != null ? String.valueOf(sinkBean.getPipeLineLength()) : StringUtils.EMPTY);
