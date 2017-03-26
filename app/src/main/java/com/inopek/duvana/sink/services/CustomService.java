@@ -44,4 +44,8 @@ public interface CustomService {
      */
     ArrayList<SinkBean> getAllSinksSaved(Context context, Date startDate, Date endDate);
 
+    /**
+     *
+     */
+    void deleteTempImageFiles(Context context);
 }

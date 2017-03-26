@@ -1,10 +1,7 @@
 package com.inopek.duvana.sink.activities;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -33,8 +30,10 @@ import com.inopek.duvana.sink.enums.SinkDiameterEnum;
 import com.inopek.duvana.sink.enums.SinkPlumbOptionEnum;
 import com.inopek.duvana.sink.enums.SinkStatusEnum;
 import com.inopek.duvana.sink.enums.SinkTypeEnum;
-import com.inopek.duvana.sink.tasks.HttpRequestSendBeanTask;
 import com.inopek.duvana.sink.utils.AddressUtils;
+import com.inopek.duvana.sink.utils.ImageUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 
@@ -47,13 +46,12 @@ import static com.inopek.duvana.sink.activities.utils.ActivityUtils.isNumeric;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.isValidSpinner;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.photoExists;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.setDefaultClient;
-import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
 
 public abstract class AbstractInputActivity extends AbstractCreationActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private Location lastLocation;
     private LocationRequest mLocationRequest;
+    protected Location lastLocation;
     protected AddressBean addressBean;
 
     protected abstract void addSendListenerAction();
@@ -94,6 +92,13 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         getImageView().setDrawingCacheEnabled(true);
         setDefaultClient(sinkBean, this, getString(R.string.client_name_preference));
 
+        if(StringUtils.isNotEmpty(sinkBean.getImageBefore())) {
+            Bitmap bipMapFromFile = ImageUtils.getBipMapFromFile(sinkBean.getImageBefore());
+            if(bipMapFromFile != null) {
+                sinkBean.setImageBefore(customService.encodeBase64(bipMapFromFile));
+            }
+        }
+
         boolean referenceExists = referenceExists(sinkBean);
         boolean validSinkStatusEnum = isValidSinkStatusEnum(sinkBean);
         boolean validSinkTypeEnum = isValidSinkTypeEnum(sinkBean);
@@ -105,9 +110,8 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
     }
 
     private boolean isPhotoTaken(SinkBean sinkBean) {
-        TextView textView = (TextView) findViewById(R.id.imageAfterTextView);
-        textView.setVisibility(View.INVISIBLE);
-        return photoExists(sinkBean.getImageAfter(), textView);
+        Button button = (Button) findViewById(R.id.cameraFinalButton);
+        return photoExists(sinkBean.getImageAfter(), button);
     }
 
     private boolean isValidSinkStatusEnum(SinkBean sinkBean) {
@@ -197,34 +201,6 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         super.onStop();
     }
 
-    protected void runTask(final SinkBean sink, final boolean checkReferenceExists, final boolean updateAll) {
-
-        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists, updateAll) {
-
-            ProgressDialog dialog;
-
-            @Override
-            protected void onPostExecute(Long id) {
-                dialog.dismiss();
-
-                if (id == null) {
-                    showToastMessage(getString(R.string.try_later_message), getBaseContext());
-                } else if (id == 0L) {
-                    createAlertReferenceDialog(sink);
-                } else {
-                    setResultActivity();
-                    finish();
-                }
-            }
-
-            @Override
-            protected void onPreExecute() {
-                dialog = createDialog();
-            }
-        }.execute();
-
-    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -259,18 +235,15 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         }
         if (location != null) {
             lastLocation = location;
-            addressBean = AddressUtils.initAddressFromLocation((EditText) findViewById(R.id.addressTxt), (EditText) findViewById(R.id.neighborhoodTxt), getBaseContext(), lastLocation);
+            if (addressBean == null) {
+                addressBean = AddressUtils.initAddressFromLocation((EditText) findViewById(R.id.addressTxt), (EditText) findViewById(R.id.neighborhoodTxt), getBaseContext(), lastLocation);
+            }
         }
     }
 
     @Override
     protected ImageView getImageView() {
         return (ImageView) findViewById(R.id.imageViewAfter);
-    }
-
-    @Override
-    protected TextView getTextViewImage() {
-        return (TextView) findViewById(R.id.imageAfterTextView);
     }
 
     protected EditText getReferenceEditText() {
@@ -313,29 +286,8 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         return (Spinner) findViewById(R.id.diameterSpinner);
     }
 
-    private void getAddressFromLocation() {
+    protected void getAddressFromLocation() {
         addressBean = AddressUtils.initAddressFromLocation((EditText) findViewById(R.id.addressTxt), (EditText) findViewById(R.id.neighborhoodTxt), getBaseContext(), lastLocation);
-    }
-
-    private void createAlertReferenceDialog(final SinkBean sinkBean) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int choice) {
-                switch (choice) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        // send again
-                        runTask(sinkBean, false, false);
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        break;
-                }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.reference_exists_save_message))
-                .setPositiveButton(R.string.yes, dialogClickListener)
-                .setNegativeButton(R.string.no, dialogClickListener).show();
     }
 
     private void addSendButtonListener() {
@@ -347,10 +299,6 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
                 addSendListenerAction();
             }
         });
-    }
-
-    private ProgressDialog createDialog() {
-        return ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), this);
     }
 
     @NonNull

@@ -15,14 +15,16 @@ import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.adapters.SinkBeanEditionAdapter;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
+import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.fragment.DatePickerFragment;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
 import com.inopek.duvana.sink.tasks.HttpRequestSearchSinkTask;
 import com.inopek.duvana.sink.utils.DateUtils;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.joda.time.DateTime;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +51,12 @@ public class SinkSearchActivity extends AppCompatActivity {
         Injector.getInstance().getAppComponent().inject(this);
         initDatesAndDatesListeners();
         addSearchListener();
+        // Clean temp file images
+        cleanImagesFiles();
+    }
+
+    private void cleanImagesFiles() {
+       customService.deleteTempImageFiles(getBaseContext());
     }
 
     @Override
@@ -95,12 +103,12 @@ public class SinkSearchActivity extends AppCompatActivity {
                     dialog.dismiss();
                     if (sinkBean != null && sinkBean.length > 0) {
                         List<SinkBean> sinksFromBase = Arrays.asList(sinkBean);
-                        if(!CollectionUtils.isEmpty(sinksFromBase)) {
+                        if(CollectionUtils.isNotEmpty(sinksFromBase)) {
                             sinksFound.addAll(sinksFromBase);
                         }
                     }
 
-                    if(!CollectionUtils.isEmpty(sinksFound)) {
+                    if(CollectionUtils.isNotEmpty(sinksFound)) {
                         populate(sinksFound);
                     }
                     else {
@@ -117,12 +125,22 @@ public class SinkSearchActivity extends AppCompatActivity {
     }
 
     private void findLocalSinks(String startDateStr, String endDateStr, List<SinkBean> sinksFound) {
+        final String profile = ActivityUtils.getStringPreference(this, R.string.profile_name_preference, getString(R.string.profile_name_preference));
         Date startDate = DateUtils.parseDateFromString(startDateStr, SinkConstants.DATE_FORMAT_DD_MM_YYYY);
         Date endDate = new DateTime().withTimeAtStartOfDay().toDate();
         if(endDateStr == null) {
             endDate = DateUtils.parseDateFromString(endDateStr, SinkConstants.DATE_FORMAT_DD_MM_YYYY);
         }
-        sinksFound.addAll(customService.getAllSinksSaved(getBaseContext(), startDate, endDate));
+        ArrayList<SinkBean> allSinksSaved = customService.getAllSinksSaved(getBaseContext(), startDate, endDate);
+        CollectionUtils.filter(allSinksSaved, new Predicate() {
+
+            @Override
+            public boolean evaluate(Object o) {
+                SinkBean sinkBean = (SinkBean) o;
+                return ProfileEnum.BEGIN.getLabel().equals(profile) ? sinkBean.getImageBefore() != null : ProfileEnum.END.getLabel().equals(profile) && sinkBean.getImageAfter() != null;
+            }
+        });
+        sinksFound.addAll(allSinksSaved);
     }
 
     private void populate(List<SinkBean> sinks) {
@@ -151,7 +169,7 @@ public class SinkSearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme_Dialog);
+                newFragment.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.AppTheme);
                 newFragment.setDateText(startDate);
                 newFragment.show(getSupportFragmentManager(), "datePicker");
             }
@@ -165,5 +183,10 @@ public class SinkSearchActivity extends AppCompatActivity {
                 newFragment.show(getSupportFragmentManager(), "datePicker");
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 }

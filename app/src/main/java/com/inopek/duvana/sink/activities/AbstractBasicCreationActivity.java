@@ -1,15 +1,15 @@
 package com.inopek.duvana.sink.activities;
 
-
 import android.graphics.Bitmap;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.beans.SinkBean;
+import com.inopek.duvana.sink.utils.ImageUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
@@ -17,14 +17,20 @@ import static com.inopek.duvana.sink.activities.utils.ActivityUtils.hasText;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.photoExists;
 import static com.inopek.duvana.sink.activities.utils.ActivityUtils.setDefaultClient;
 
-public class SinkBeforeCreationActivity extends AbstractCreationActivity {
+public abstract class AbstractBasicCreationActivity extends AbstractCreationActivity {
 
+
+    protected abstract void populateFromExtras(String extra);
 
     @Override
     protected void customInitialize() {
-        setContentView(R.layout.activity_before_sink_creation);
+        setContentView(R.layout.activity_basic_sink_creation);
         addCameraButtonListener((Button) findViewById(R.id.cameraPreviousButton));
         addSaveSendLaterButtonListener((Button) findViewById(R.id.saveButton));
+        String extra = getIntent().getStringExtra("sinkBean");
+        if (extra != null) {
+            populateFromExtras(extra);
+        }
     }
 
     @Override
@@ -41,12 +47,16 @@ public class SinkBeforeCreationActivity extends AbstractCreationActivity {
         sinkBean.setReference(referenceText.getText().toString());
         sinkBean.setSinkCreationDate(new Date());
 
-        TextView textView = (TextView) findViewById(R.id.imageBeforeTextView);
-        textView.setVisibility(View.INVISIBLE);
-
         setClient(sinkBean);
 
-        boolean photoExists = photoExists(sinkBean.getImageBefore(), textView);
+        if(StringUtils.isNotEmpty(sinkBean.getImageAfter())) {
+            Bitmap bipMapFromFile = ImageUtils.getBipMapFromFile(sinkBean.getImageAfter());
+            if(bipMapFromFile != null) {
+                sinkBean.setImageAfter(customService.encodeBase64(bipMapFromFile));
+            }
+        }
+
+        boolean photoExists = photoExists(sinkBean.getImageBefore(), (Button) findViewById(R.id.cameraPreviousButton));
 
         return referenceExist && photoExists;
     }
@@ -54,16 +64,6 @@ public class SinkBeforeCreationActivity extends AbstractCreationActivity {
     @Override
     protected ImageView getImageView() {
         return (ImageView) findViewById(R.id.imageViewBefore);
-    }
-
-    @Override
-    protected TextView getTextViewImage() {
-        return (TextView) findViewById(R.id.imageBeforeTextView);
-    }
-
-    @Override
-    protected SinkBean getSinkBeanToSave() {
-        return new SinkBean();
     }
 
     private void setClient(SinkBean sinkBean) {

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(permissions, PERMISSIONS_REQUEST_CODE);
         } else {
             // Permission Granted
-            createSettingkActivity();
+            createSettingsActivity();
             settingPreferences();
             createSendSinkActivity();
         }
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             case 10:
                 if (hasAllPermissionsGranted()) {
                     // Permission Granted
-                    createSettingkActivity();
+                    createSettingsActivity();
                     settingPreferences();
                     createSendSinkActivity();
 
@@ -106,11 +106,12 @@ public class MainActivity extends AppCompatActivity {
         String profilePreference = ActivityUtils.getStringPreference(this, R.string.profile_name_preference, getString(R.string.profile_name_preference));
         if (ProfileEnum.BEGIN.getLabel().equals(profilePreference)) {
             beforeCreateSinkActivity();
+            createSearchActivity();
             Button button = (Button) findViewById(R.id.addSinkButton);
             button.setEnabled(false);
         } else if (ProfileEnum.END.getLabel().equals(profilePreference)) {
             createSinkActivity();
-            createConsultActivity();
+            createSearchActivity();
             Button button = (Button) findViewById(R.id.addSinkBeforeButton);
             button.setEnabled(false);
         } else {
@@ -120,12 +121,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void createConsultActivity() {
-        Button configButton = (Button) findViewById(R.id.editSinkButton);
+    private void createSearchActivity() {
+        Button configButton = (Button) findViewById(R.id.searchSinkButton);
         configButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editIntent();
+                searchIntent();
             }
         });
     }
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void createSettingkActivity() {
+    private void createSettingsActivity() {
         Button configButton = (Button) findViewById(R.id.configButton);
         configButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void beforeCreateSinkIntent() {
-        Intent openSinkBeforeCreationIntent = new Intent(this, SinkBeforeCreationActivity.class);
+        Intent openSinkBeforeCreationIntent = new Intent(this, SinkBasicCreationActivity.class);
         startActivity(openSinkBeforeCreationIntent);
     }
 
@@ -204,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(settingIntent);
     }
 
-    private void editIntent() {
+    private void searchIntent() {
         startActivity(new Intent(this, SinkSearchActivity.class));
     }
 

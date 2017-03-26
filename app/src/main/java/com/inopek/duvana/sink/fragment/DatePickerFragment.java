@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.constants.SinkConstants;
 
 import org.joda.time.DateTime;
@@ -30,7 +31,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), R.style.Datepicker, this, year, month, day);
+        return datePickerDialog;
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {

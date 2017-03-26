@@ -16,10 +16,12 @@ import android.widget.Button;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.inopek.duvana.sink.R;
+import com.inopek.duvana.sink.activities.SinkBasicEditionActivity;
 import com.inopek.duvana.sink.activities.SinkEditionActivity;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
+import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.tasks.HttpRequestDeleteSinkTask;
 import com.inopek.duvana.sink.utils.DateUtils;
 import com.inopek.duvana.sink.utils.PropertiesUtils;
@@ -80,30 +82,44 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
     }
 
     private void edition(SinkBean sinkBean) {
-        String afterImageTmpPath;
-        if (sinkBean.getImageAfter() != null && sinkBean.getReference() != null) {
-            afterImageTmpPath = saveImage(sinkBean.getImageAfter(), sinkBean.getReference());
-            sinkBean.setImageAfter(afterImageTmpPath);
-        }
-        Intent intent = new Intent(activity, SinkEditionActivity.class);
         Gson gson = new GsonBuilder().create();
+        String profilePreference = ActivityUtils.getStringPreference(activity, R.string.profile_name_preference, getContext().getString(R.string.profile_name_preference));
+        String imageTmpPath;
+        String reference = sinkBean.getReference();
+        Intent intent = null;
+        if(reference != null) {
+            if (StringUtils.isNoneEmpty(sinkBean.getImageBefore())/*ProfileEnum.BEGIN.getLabel().equals(profilePreference) && sinkBean.getImageBefore() != null*/) {
+                imageTmpPath = saveImage(sinkBean.getImageBefore(), reference);
+                sinkBean.setImageBefore(imageTmpPath);
+            }
+            if (StringUtils.isNoneEmpty(sinkBean.getImageAfter()) /*ProfileEnum.END.getLabel().equals(profilePreference) && sinkBean.getImageAfter() != null*/) {
+                imageTmpPath = saveImage(sinkBean.getImageAfter(), reference);
+                sinkBean.setImageAfter(imageTmpPath);
+            }
+        }
+        if (ProfileEnum.BEGIN.getLabel().equals(profilePreference)) {
+            intent = new Intent(activity, SinkBasicEditionActivity.class);
+        } else if (ProfileEnum.END.getLabel().equals(profilePreference)) {
+            intent = new Intent(activity, SinkEditionActivity.class);
+        }
         String jsonObject = gson.toJson(sinkBean, SinkBean.class);
         intent.putExtra("sinkBean", jsonObject);
         activity.startActivityForResult(intent, SinkConstants.EDITION_ACTIVITY_REQUEST_CODE);
+
     }
 
     private String saveImage(String base64, String reference) {
         try {
             DateTime dateTime = new DateTime();
-            String fileName = reference + DateUtils.dateToString(dateTime, SinkConstants.DATE_FORMAT_YYYT_MM_DD);
-            String path = Environment.getExternalStorageDirectory() + PropertiesUtils.getProperty("duvana.app.cache.path.images", getContext()) + File.separator;
+            String fileName = reference + DateUtils.dateToString(dateTime, SinkConstants.DATE_FORMAT_YYYT_MM_DD_HH_mm_ss_SSS);
+            String path = getContext().getCacheDir().getAbsolutePath()+ File.separator + "images" + File.separator; //Environment.getExternalStorageDirectory() + PropertiesUtils.getProperty("duvana.app.cache.path.images", getContext()) + File.separator;
             File dir = new File(path);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
             path += fileName + ".png";
             if(base64.contains(path)) {
-                // the path is already set, check file exist
+                // the path is already set, check file exists
                 return  getFilePath(base64);
             }
             // decode and create file

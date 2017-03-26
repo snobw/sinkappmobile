@@ -42,9 +42,11 @@
     <string name="button.add.title">Completar reporte</string>
     <string name="button.edit.title">Consultar reporte</string>
     <string name="button.send.title">Enviar reporte</string>
+    <string name="button.send.changes.title">Enviar los cambios</string>
     <string name="button.save.title">Guardar</string>
     <string name="button.exit.title">Salir</string>
     <string name="save.send.later.default.message">Guardar y enviar después</string>
+    <string name="save.changes.default.message">Guardar los cambios</string>
     <string name="send.default.message">Enviar reporte</string>
     <string name="sending.default.message">Enviando reporte...</string>
     <string name="searching.default.message">Buscando...</string>

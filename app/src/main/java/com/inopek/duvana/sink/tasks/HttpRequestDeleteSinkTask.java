@@ -16,7 +16,7 @@ public class HttpRequestDeleteSinkTask extends AsyncTask<Void, Void, Boolean> {
 
     private static final int CONNECT_TIMEOUT = 30000;
     private static final String HTTP_PREFIX = "http://";
-    private static final String ADDRESS_HOST = "duvana.server.host.address";
+    private static final String ADDRESS_HOST = "duvana.server.host.address.distant";
     private static final String PORT_HOST = "duvana.server.host.port";
     private static final String REQUEST_NAME = "/delete";
 

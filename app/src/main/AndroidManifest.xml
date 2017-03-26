@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.inopek.duvana.sink.activities.SinkBeforeCreationActivity"
+            android:name="com.inopek.duvana.sink.activities.SinkBasicCreationActivity"
             android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
@@ -62,6 +62,11 @@
             </intent-filter>
         </activity>
         <activity android:name="com.inopek.duvana.sink.activities.SinkEditionActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.inopek.duvana.sink.activities.SinkBasicEditionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
             </intent-filter>

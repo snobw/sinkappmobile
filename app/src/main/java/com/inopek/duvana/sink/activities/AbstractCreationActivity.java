@@ -1,6 +1,9 @@
 package com.inopek.duvana.sink.activities;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -17,10 +20,12 @@ import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
+import com.inopek.duvana.sink.tasks.HttpRequestSendBeanTask;
 import com.inopek.duvana.sink.utils.ImageUtils;
 
 import javax.inject.Inject;
 
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
 import static com.inopek.duvana.sink.constants.SinkConstants.PHOTO_REQUEST_CODE;
 
 public abstract class AbstractCreationActivity extends AppCompatActivity {
@@ -36,10 +41,7 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
 
     protected abstract ImageView getImageView();
 
-    protected abstract TextView getTextViewImage();
-
     protected abstract SinkBean getSinkBeanToSave();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +110,6 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                         if (bitmap != null) {
                             getImageView().setImageBitmap(bitmap);
                             getImageView().setDrawingCacheEnabled(true);
-                            getTextViewImage().setVisibility(View.INVISIBLE);
                             imageBitmap = bitmap;
                         }
                     }
@@ -116,6 +117,59 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
             }
 
         }).start();
+    }
+
+    protected void runTask(final SinkBean sink, final boolean checkReferenceExists, final boolean updateAll) {
+
+        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists, updateAll) {
+
+            ProgressDialog dialog;
+
+            @Override
+            protected void onPostExecute(Long id) {
+                dialog.dismiss();
+
+                if (id == null) {
+                    showToastMessage(getString(R.string.try_later_message), getBaseContext());
+                } else if (id == 0L) {
+                    createAlertReferenceDialog(sink);
+                } else {
+                    setResultActivity();
+                    finish();
+                }
+            }
+
+            @Override
+            protected void onPreExecute() {
+                dialog = createDialog();
+            }
+        }.execute();
+
+    }
+
+    private void createAlertReferenceDialog(final SinkBean sinkBean) {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int choice) {
+                switch (choice) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        // send again
+                        runTask(sinkBean, false, true);
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.reference_exists_save_message))
+                .setPositiveButton(R.string.yes, dialogClickListener)
+                .setNegativeButton(R.string.no, dialogClickListener).show();
+    }
+
+    private ProgressDialog createDialog() {
+        return ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), this);
     }
 
     @Override

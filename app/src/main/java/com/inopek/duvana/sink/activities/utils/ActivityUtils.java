@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -130,18 +131,12 @@ public final class ActivityUtils {
         return false;
     }
 
-    public static boolean photoExists(String encodedImage, TextView textView) {
-        textView.setError(null);
+    public static boolean photoExists(String encodedImage, Button button) {
+        button.setError(null);
         boolean imageExists = isNotEmpty(encodedImage);
         if (!imageExists) {
-            setErrorForImage(textView);
+            button.setError(REQUIRED_PHOTO);
         }
         return imageExists;
     }
-
-    private static void setErrorForImage(TextView textView) {
-        textView.setVisibility(View.VISIBLE);
-        textView.setError(REQUIRED_PHOTO);
-    }
-
 }

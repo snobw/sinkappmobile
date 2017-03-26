@@ -90,6 +90,8 @@ public class CustomServiceImpl implements CustomService {
     public ArrayList<SinkBean> getAllSinksToSend(Context context) {
         ArrayList<SinkBean> sinkBeans = new ArrayList<>();
         try {
+            File del = new File(Environment.getExternalStorageDirectory() + PropertiesUtils.getProperty("duvana.app.cache.path.images", context));
+            del.delete();
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
             File directory = new File(path);
             File[] files = directory.listFiles();
@@ -126,6 +128,18 @@ public class CustomServiceImpl implements CustomService {
         }
 
         return sinkBeans;
+    }
+
+    @Override
+    public void deleteTempImageFiles(Context context) {
+        String path = context.getCacheDir().getAbsolutePath()+ File.separator + "images";
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        if(files != null && files.length > 0) {
+            for (File file : files) {
+                file.delete();
+            }
+        }
     }
 
     private void createSinkBeansFromFile(ArrayList<SinkBean> sinkBeans, File[] files) throws IOException {

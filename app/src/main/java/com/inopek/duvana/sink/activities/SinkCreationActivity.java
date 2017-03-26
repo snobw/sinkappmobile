@@ -1,5 +1,7 @@
 package com.inopek.duvana.sink.activities;
 
+import com.inopek.duvana.sink.R;
+import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.beans.SinkBean;
 
 import java.util.Date;
@@ -11,6 +13,9 @@ public class SinkCreationActivity extends AbstractInputActivity {
         SinkBean sinkBean = new SinkBean();
         if (createSinkBean(sinkBean)) {
             runTask(sinkBean, true, false);
+        }else {
+            // Message d'error
+            ActivityUtils.showToastMessage(getString(R.string.required_fields_empty_message), getBaseContext());
         }
     }
 
