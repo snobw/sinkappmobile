@@ -50,11 +50,9 @@ public class CustomServiceImpl implements CustomService {
     @Override
     public boolean createAndSaveFile(SinkBean sinkBean, Context context) {
         try {
-            Gson gson = new GsonBuilder().create();
-            String toJson = gson.toJson(sinkBean, SinkBean.class);
             File data;
             if(!fileExists(sinkBean)) {
-                String path = Environment.getExternalStorageDirectory() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context) + File.separator;
+                String path = Environment.getExternalStorageDirectory() + PropertiesUtils.getProperty("duvana.app.cache.path", context) + File.separator;
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();
@@ -65,9 +63,12 @@ public class CustomServiceImpl implements CustomService {
                     data.delete();
                     data.createNewFile();
                 }
+                sinkBean.setFileName(path);
             } else {
                 data = new File(sinkBean.getFileName());
             }
+            Gson gson = new GsonBuilder().create();
+            String toJson = gson.toJson(sinkBean, SinkBean.class);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(data), SinkConstants.ENCODING_DEFAULT_NAME));
             bw.write(toJson);
             bw.flush();

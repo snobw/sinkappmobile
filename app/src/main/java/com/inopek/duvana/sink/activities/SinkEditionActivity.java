@@ -23,8 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Date;
 
-import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
-
 
 public class SinkEditionActivity extends AbstractInputActivity {
 
@@ -85,6 +83,11 @@ public class SinkEditionActivity extends AbstractInputActivity {
     @Override
     protected SinkBean getSinkBeanToSave() {
         return sinkBean;
+    }
+
+    @Override
+    protected boolean isModeEdition() {
+        return true;
     }
 
     private void populate(SinkBean sinkBean) {

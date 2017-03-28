@@ -11,13 +11,15 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
+import com.inopek.duvana.sink.beans.ClientReferenceBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
+import com.inopek.duvana.sink.dao.ReferenceClientDao;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
 import com.inopek.duvana.sink.tasks.HttpRequestSendBeanTask;
@@ -32,6 +34,10 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
 
     private Bitmap imageBitmap;
 
+    private ReferenceClientDao clientDao;
+
+    private String profilePreference;
+
     @Inject
     CustomService customService;
 
@@ -43,12 +49,17 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
 
     protected abstract SinkBean getSinkBeanToSave();
 
+    protected abstract boolean isModeEdition();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // inject dependecies
         Injector.getInstance().getAppComponent().inject(this);
         initialize();
+        clientDao =  new ReferenceClientDao(this);
+        profilePreference = ActivityUtils.getStringPreference(this, R.string.profile_name_preference, getString(R.string.profile_name_preference));
+
     }
 
     private void initialize() {
@@ -63,12 +74,19 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                 SinkBean sinkBean = getSinkBeanToSave();
                 Context context = getBaseContext();
                 if (createSinkBean(sinkBean)) {
-                    boolean fileCreated = customService.createAndSaveFile(sinkBean, getBaseContext());
-                    if (fileCreated) {
-                        setResultActivity();
-                        finish();
+                    // check reference-client does not exist
+                    if(referenceExistsInLocal(sinkBean) || referenceExistsInBdd(sinkBean)) {
+                        // showError
+                        createAlertReferenceDialog();
                     } else {
-                        ActivityUtils.showToastMessage(getString(R.string.try_later_message), context);
+                        boolean fileCreated = customService.createAndSaveFile(sinkBean, getBaseContext());
+                        if (fileCreated) {
+                            setResultActivity();
+                            addReferenceAndClientToDb(sinkBean);
+                            finish();
+                        } else {
+                            ActivityUtils.showToastMessage(getString(R.string.try_later_message), context);
+                        }
                     }
                 } else {
                     // Message d'error
@@ -121,51 +139,53 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
 
     protected void runTask(final SinkBean sink, final boolean checkReferenceExists, final boolean updateAll) {
 
-        new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists, updateAll) {
+        if(referenceExistsInLocal(sink) || referenceExistsInBdd(sink)) {
+            // showError
+            createAlertReferenceDialog();
+        } else {
+            new HttpRequestSendBeanTask(sink, getBaseContext(), ActivityUtils.getCurrentUser(this), checkReferenceExists, updateAll) {
 
-            ProgressDialog dialog;
+                ProgressDialog dialog;
 
-            @Override
-            protected void onPostExecute(Long id) {
-                dialog.dismiss();
+                @Override
+                protected void onPostExecute(Long id) {
+                    dialog.dismiss();
 
-                if (id == null) {
-                    showToastMessage(getString(R.string.try_later_message), getBaseContext());
-                } else if (id == 0L) {
-                    createAlertReferenceDialog(sink);
-                } else {
-                    setResultActivity();
-                    finish();
+                    if (id == null) {
+                        showToastMessage(getString(R.string.try_later_message), getBaseContext());
+                    } else if (id == 0L) {
+                        createAlertReferenceDialog();
+                    } else {
+                        setResultActivity();
+                        finish();
+                    }
                 }
-            }
 
-            @Override
-            protected void onPreExecute() {
-                dialog = createDialog();
-            }
-        }.execute();
+                @Override
+                protected void onPreExecute() {
+                    dialog = createDialog();
+                }
+            }.execute();
+        }
 
     }
 
-    private void createAlertReferenceDialog(final SinkBean sinkBean) {
+    private void createAlertReferenceDialog() {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int choice) {
                 switch (choice) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        // send again
-                        runTask(sinkBean, false, true);
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
+                        getReferenceEditText().setError(getString(R.string.reference_exists_message));
                         break;
                 }
             }
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.reference_exists_save_message))
-                .setPositiveButton(R.string.yes, dialogClickListener)
-                .setNegativeButton(R.string.no, dialogClickListener).show();
+        builder.setMessage(getString(R.string.reference_exists_error_message))
+                .setPositiveButton(R.string.ok, dialogClickListener)
+                .setCancelable(false).show();
     }
 
     private ProgressDialog createDialog() {
@@ -187,5 +207,34 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
             getImageView().setImageBitmap(bitmapImage);
             getImageView().setDrawingCacheEnabled(true);
         }
+    }
+
+    private void addReferenceAndClientToDb(SinkBean sinkBean) {
+        ReferenceClientDao clientDao = new ReferenceClientDao(this);
+        clientDao.open();
+        ClientReferenceBean clientReferenceBean = new ClientReferenceBean(sinkBean.getReference(), sinkBean.getClient().getName(), sinkBean.getFileName(), profilePreference);
+        clientDao.add(clientReferenceBean);
+        clientDao.close();
+    }
+
+    protected boolean referenceExistsInLocal(SinkBean sinkBean) {
+        clientDao.open();
+        ClientReferenceBean bean = clientDao.getByReferenceAndClientName(sinkBean.getReference(), sinkBean.getClient().getName(), profilePreference);
+        clientDao.close();
+        if(isModeEdition()) {
+            return bean != null && !bean.getFileName().equals(sinkBean.getFileName());
+        }
+        return bean != null;
+    }
+
+    protected boolean referenceExistsInBdd(SinkBean sinkBean) {
+        if(ActivityUtils.isNetworkAvailable(this)) {
+
+        }
+        return false;
+    }
+
+    protected EditText getReferenceEditText() {
+        return (EditText) findViewById(R.id.referenceTxt);
     }
 }

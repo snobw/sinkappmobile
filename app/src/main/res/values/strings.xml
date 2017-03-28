@@ -4,6 +4,7 @@
     <string name="client_name.preference">CLIENT</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
+    <string name="ok">Ok</string>
     <string name="profile_name.preference">PROFILE</string>
     <string name="imei.name.preference">IMEI</string>
     <string name="imei.error">Su usuario no ha sido registrado. Contacte el administrador</string>
@@ -55,6 +56,8 @@
     <string name="required.fields.empty.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
     <string name="success.save.message">Los datos han sido guardados exitosamente</string>
     <string name="reference.exists.save.message">La referencia ya existe. Esta seguro que quiere actualizarla ?</string>
+    <string name="reference.exists.message">La referencia ya existe. Esta seguro que quiere actualizarla ?</string>
+    <string name="reference.exists.error.message">La referencia ya existe. Debe crear una nueva!</string>
     <string name="try.later.message">Un error se produjo, intente mas tarde</string>
     <string name="search.try.later.message">No se encontraron datos, intente mas tarde</string>
     <string name="delete.try.later.message">No se pudo borrar la referencia. Intente mas tarde</string>

@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
@@ -24,11 +23,9 @@ import com.inopek.duvana.sink.constants.SinkConstants;
 import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.tasks.HttpRequestDeleteSinkTask;
 import com.inopek.duvana.sink.utils.DateUtils;
-import com.inopek.duvana.sink.utils.PropertiesUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -154,13 +151,16 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
                 switch (choice) {
                     case DialogInterface.BUTTON_POSITIVE:
                         // delete task
-                        File file = new File(sinkBean.getFileName());
-                        if (file.exists()) {
+                        File file = sinkBean.getFileName() != null ? new File(sinkBean.getFileName()) : null;
+                        if (file!= null && file.exists()) {
                             file.delete();
                             removeSink(sinkBean);
                             notifyDataSetChanged();
-                        } else {
+                        } else if(sinkBean.getId() != null) {
                             runDeleteTask(sinkBean);
+                            notifyDataSetChanged();
+                        } else {
+                            showToastMessage(getContext().getString(R.string.try_later_message), getContext());
                         }
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:

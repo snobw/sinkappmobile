@@ -263,10 +263,6 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         return (ImageView) findViewById(R.id.imageViewAfter);
     }
 
-    protected EditText getReferenceEditText() {
-        return (EditText) findViewById(R.id.referenceTxt);
-    }
-
     protected EditText getAddressEditText() {
         return (EditText) findViewById(R.id.addressTxt);
     }

@@ -51,6 +51,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.0.1'
     compile 'net.danlew:android.joda:2.9.7'
     compile 'org.apache.commons:commons-collections4:4.1'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
 }
 
 

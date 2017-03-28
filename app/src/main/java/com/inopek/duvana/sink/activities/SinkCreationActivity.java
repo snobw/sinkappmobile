@@ -33,4 +33,9 @@ public class SinkCreationActivity extends AbstractInputActivity {
     protected SinkBean getSinkBeanToSave() {
         return new SinkBean();
     }
+
+    @Override
+    protected boolean isModeEdition() {
+        return false;
+    }
 }

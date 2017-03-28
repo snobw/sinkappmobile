@@ -97,9 +97,9 @@ public class SinkBasicEditionActivity extends AbstractBasicCreationActivity {
         return sinkBean;
     }
 
-    private EditText getReferenceEditText() {
-        return (EditText) findViewById(R.id.referenceTxt);
+    @Override
+    protected boolean isModeEdition() {
+        return true;
     }
-
 
 }

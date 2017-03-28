@@ -108,10 +108,8 @@ public class SinkSearchActivity extends AppCompatActivity {
                         }
                     }
 
-                    if(CollectionUtils.isNotEmpty(sinksFound)) {
-                        populate(sinksFound);
-                    }
-                    else {
+                    populate(sinksFound);
+                    if(CollectionUtils.isEmpty(sinksFound)) {
                         showToastMessage(getString(R.string.search_try_later_message), getBaseContext());
                     }
                 }

@@ -11,6 +11,11 @@ public class SinkBasicCreationActivity extends AbstractBasicCreationActivity {
     }
 
     @Override
+    protected boolean isModeEdition() {
+        return false;
+    }
+
+    @Override
     protected void populateFromExtras(String extra) {
 
     }
