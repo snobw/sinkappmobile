@@ -18,8 +18,10 @@ import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.SinkBasicEditionActivity;
 import com.inopek.duvana.sink.activities.SinkEditionActivity;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
+import com.inopek.duvana.sink.beans.ClientReferenceBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
+import com.inopek.duvana.sink.dao.ReferenceClientDao;
 import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.tasks.HttpRequestDeleteSinkTask;
 import com.inopek.duvana.sink.utils.DateUtils;
@@ -155,6 +157,7 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
                         if (file!= null && file.exists()) {
                             file.delete();
                             removeSink(sinkBean);
+                            deleteFromDataBase(sinkBean);
                             notifyDataSetChanged();
                         } else if(sinkBean.getId() != null) {
                             runDeleteTask(sinkBean);
@@ -175,6 +178,14 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
                 .setNegativeButton(getContext().getString(R.string.no), dialogClickListener).show();
     }
 
+    private void deleteFromDataBase(SinkBean sinkBean) {
+        String profilePreference = ActivityUtils.getStringPreference(activity, R.string.profile_name_preference, getContext().getString(R.string.profile_name_preference));
+        ReferenceClientDao clientDao = new ReferenceClientDao(getContext());
+        clientDao.open();
+        ClientReferenceBean clientReferenceBean = new ClientReferenceBean(sinkBean.getReference(), sinkBean.getClient().getName(), sinkBean.getFileName(), profilePreference);
+        clientDao.delete(clientReferenceBean);
+        clientDao.close();
+    }
     private void runDeleteTask(final SinkBean sinkBean) {
         if (sinkBean == null) {
             showToastMessage(getContext().getString(R.string.delete_try_later_message), activity);

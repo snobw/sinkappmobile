@@ -33,6 +33,11 @@ public class ReferenceClientDao extends AbstractDao<ReferenceClientHandler> {
 
     }
 
+    public void delete(ClientReferenceBean clientReferenceBean) {
+        String query = ReferenceClientHandler.COLUMN_REFERENCE + " = \"" + clientReferenceBean.getReference() + "\"" + " AND " + ReferenceClientHandler.COLUMN_CLIENT_NAME + " = \"" + clientReferenceBean.getClientName() + "\"" + " AND " + ReferenceClientHandler.COLUMN_PROFILE_NAME + " = \"" + clientReferenceBean.getProfileName() + "\"";
+        getDb().delete(ReferenceClientHandler.TABLE_NAME, query, null);
+    }
+
     public ClientReferenceBean getByReferenceAndClientName(String reference, String clientName, String profileName) {
         String query = ReferenceClientHandler.COLUMN_REFERENCE + " = \"" + reference + "\"" + " AND " + ReferenceClientHandler.COLUMN_CLIENT_NAME + " = \"" + clientName + "\"" + " AND " + ReferenceClientHandler.COLUMN_PROFILE_NAME + " = \"" + profileName + "\"";
         Cursor c = getDb().query(ReferenceClientHandler.TABLE_NAME, new String[]{ReferenceClientHandler.KEY, ReferenceClientHandler.COLUMN_REFERENCE, ReferenceClientHandler.COLUMN_CLIENT_NAME, ReferenceClientHandler.COLUMN_FILE_NAME, ReferenceClientHandler.COLUMN_PROFILE_NAME}, query, null, null, null, null);

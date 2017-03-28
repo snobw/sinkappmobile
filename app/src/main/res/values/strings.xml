@@ -51,6 +51,7 @@
     <string name="send.default.message">Enviar reporte</string>
     <string name="sending.default.message">Enviando reporte...</string>
     <string name="searching.default.message">Buscando...</string>
+    <string name="wait.default.message">Espere un momento por favor...</string>
     <string name="deleting.default.message">Borrando...</string>
     <string name="alert.default.message">Alerte</string>
     <string name="required.fields.empty.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
+import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.utils.PropertiesUtils;
 
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -20,38 +21,35 @@ import java.util.Map;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class HttpRequestSearchSinkTask extends AsyncTask<Object, Object, SinkBean[]> {
+public class HttpRequestSearchPairReferenceClientTask extends AsyncTask<Void, Void, Boolean> {
 
-    private static final String REQUEST_NAME = "/search/{startDate}/{endDate}/{clientName}";
+    private static final String REQUEST_NAME = "/searchPairReferenceClient/{clientName}/{reference}/{stepBefore}";
 
-    private String startDate;
-    private String endDate;
+    private SinkBean sinkBean;
     private Context context;
 
-    public HttpRequestSearchSinkTask(String startDate, String endDate, Context context) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+    public HttpRequestSearchPairReferenceClientTask(SinkBean sinkBean, Context context) {
+        this.sinkBean = sinkBean;
         this.context = context;
     }
 
     @Override
-    protected SinkBean[] doInBackground(Object... params) {
+    protected Boolean doInBackground(Void... params) {
         try {
             SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences(context);
-            String clientName = defaultSharedPreferences.getString(context.getString(R.string.client_name_preference), context.getString(R.string.client_name_preference));
+            String profile = defaultSharedPreferences.getString(context.getString(R.string.profile_name_preference), context.getString(R.string.profile_name_preference));
             final String url = SinkConstants.HTTP_PREFIX + PropertiesUtils.getProperty(SinkConstants.ADDRESS_HOST, context) + ":" + PropertiesUtils.getProperty(SinkConstants.PORT_HOST, context) + REQUEST_NAME;
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Map<String, String> mapVariables = new HashMap<>();
-            mapVariables.put("startDate", startDate.replaceAll("/", "-"));
-            mapVariables.put("endDate", endDate.replaceAll("/", "-"));
-            mapVariables.put("clientName", clientName);
+            mapVariables.put("reference", sinkBean.getReference());
+            mapVariables.put("stepBefore", ProfileEnum.BEGIN.getLabel().equals(profile) ? String.valueOf(true) : String.valueOf(false));
+            mapVariables.put("clientName", sinkBean.getClient().getName());
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setConnectTimeout(SinkConstants.CONNECT_TIMEOUT);
-            return restTemplate.getForObject(url, SinkBean[].class, mapVariables);
+            return restTemplate.getForObject(url, Boolean.class, mapVariables);
         } catch (Exception e) {
             Log.e("HttpRequestTask ", e.getMessage(), e);
             return null;
         }
     }
-
 }

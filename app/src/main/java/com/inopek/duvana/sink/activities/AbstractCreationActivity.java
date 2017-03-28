@@ -22,8 +22,11 @@ import com.inopek.duvana.sink.constants.SinkConstants;
 import com.inopek.duvana.sink.dao.ReferenceClientDao;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
+import com.inopek.duvana.sink.tasks.HttpRequestSearchPairReferenceClientTask;
 import com.inopek.duvana.sink.tasks.HttpRequestSendBeanTask;
 import com.inopek.duvana.sink.utils.ImageUtils;
+
+import org.apache.commons.lang3.BooleanUtils;
 
 import javax.inject.Inject;
 
@@ -75,18 +78,11 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                 Context context = getBaseContext();
                 if (createSinkBean(sinkBean)) {
                     // check reference-client does not exist
-                    if(referenceExistsInLocal(sinkBean) || referenceExistsInBdd(sinkBean)) {
+                    if(!referenceExistsInLocal(sinkBean)) {
+                        checkExistsInBd(sinkBean, true);
+                    } else {
                         // showError
                         createAlertReferenceDialog();
-                    } else {
-                        boolean fileCreated = customService.createAndSaveFile(sinkBean, getBaseContext());
-                        if (fileCreated) {
-                            setResultActivity();
-                            addReferenceAndClientToDb(sinkBean);
-                            finish();
-                        } else {
-                            ActivityUtils.showToastMessage(getString(R.string.try_later_message), context);
-                        }
                     }
                 } else {
                     // Message d'error
@@ -94,6 +90,46 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void checkExistsInBd(final SinkBean sinkBean, final boolean createFile) {
+
+        if(ActivityUtils.isNetworkAvailable(this)) { // TODO check mode edition
+            new HttpRequestSearchPairReferenceClientTask(sinkBean, getBaseContext()) {
+                ProgressDialog dialog;
+
+                @Override
+                protected void onPostExecute(Boolean pairReferenceClientExists) {
+                    dialog.dismiss();
+                    if(BooleanUtils.toBoolean(pairReferenceClientExists)){
+                        createAlertReferenceDialog();
+                    } else if (createFile){
+                        createFileWithSinkData(sinkBean);
+                    } else {
+                        // send
+                        // TODO validate or delete this block
+                    }
+                }
+
+                @Override
+                protected void onPreExecute() {
+                    dialog = createDialog(getString(R.string.wait_default_message));
+                }
+            }.execute();
+        } else {
+            createFileWithSinkData(sinkBean);
+        }
+    }
+
+    private void createFileWithSinkData(SinkBean sinkBean) {
+        boolean fileCreated = customService.createAndSaveFile(sinkBean, getBaseContext());
+        if (fileCreated) {
+            setResultActivity();
+            addReferenceAndClientToDb(sinkBean);
+            finish();
+        } else {
+            ActivityUtils.showToastMessage(getString(R.string.try_later_message), getBaseContext());
+        }
     }
 
     protected void setResultActivity() {
@@ -139,7 +175,7 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
 
     protected void runTask(final SinkBean sink, final boolean checkReferenceExists, final boolean updateAll) {
 
-        if(referenceExistsInLocal(sink) || referenceExistsInBdd(sink)) {
+        if(referenceExistsInLocal(sink) && !isModeEdition() && sink.getId() == null) {
             // showError
             createAlertReferenceDialog();
         } else {
@@ -163,7 +199,7 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPreExecute() {
-                    dialog = createDialog();
+                    dialog = createDialog(getString(R.string.sending_default_message));
                 }
             }.execute();
         }
@@ -188,8 +224,8 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                 .setCancelable(false).show();
     }
 
-    private ProgressDialog createDialog() {
-        return ActivityUtils.createProgressDialog(getString(R.string.sending_default_message), this);
+    private ProgressDialog createDialog(String message) {
+        return ActivityUtils.createProgressDialog(message, this);
     }
 
     @Override
@@ -225,13 +261,6 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
             return bean != null && !bean.getFileName().equals(sinkBean.getFileName());
         }
         return bean != null;
-    }
-
-    protected boolean referenceExistsInBdd(SinkBean sinkBean) {
-        if(ActivityUtils.isNetworkAvailable(this)) {
-
-        }
-        return false;
     }
 
     protected EditText getReferenceEditText() {
