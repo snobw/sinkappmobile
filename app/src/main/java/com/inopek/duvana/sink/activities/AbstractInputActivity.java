@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,10 +73,26 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         initDiameterSpinner(getDiameterSpinner(), context);
         initPlumbSpinner(getPlumbSpinner(), context);
         initLocationRequest();
+        addSpinnerTypeListener();
         String extra = getIntent().getStringExtra("sinkBean");
         if (extra != null) {
             populateFromExtras(extra);
         }
+    }
+
+    private void addSpinnerTypeListener() {
+        getTypeSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String typeSelected = getTypeSpinner().getSelectedItem().toString();
+                getLengthEditText().setEnabled(!SinkTypeEnum.COVENTIONAL.getLabel().equals(typeSelected));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     @Override
