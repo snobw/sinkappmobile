@@ -1,6 +1,7 @@
 package com.inopek.duvana.sink.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ public abstract class AbstractSinkBeanAdapter extends ArrayAdapter<SinkBean> {
 
         // Populate the data into the template view using the data object
         referenceTv.setText(sinkBean.getReference());
+        referenceTv.setError(null);
+        referenceTv.setTextColor(ContextCompat.getColor(getContext(), R.color.colorBlack));
 
         populateCustomView(convertView, sinkBean);
 

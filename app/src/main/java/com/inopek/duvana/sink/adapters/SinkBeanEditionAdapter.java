@@ -62,7 +62,12 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
         Button deleteButton = (Button) convertView.findViewById(R.id.deleteButton);
 
         editButton.setVisibility(View.VISIBLE);
+//        if(sinkBean.getId() != null) {
+//            deleteButton.setVisibility(View.GONE);
+//            activity.findViewById(R.id.deleteTitle).setVisibility(View.GONE);
+//        }
         deleteButton.setVisibility(View.VISIBLE);
+        deleteButton.setEnabled(sinkBean.getId() == null);
 
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,8 +187,8 @@ public class SinkBeanEditionAdapter extends AbstractSinkBeanAdapter {
         String profilePreference = ActivityUtils.getStringPreference(activity, R.string.profile_name_preference, getContext().getString(R.string.profile_name_preference));
         ReferenceClientDao clientDao = new ReferenceClientDao(getContext());
         clientDao.open();
-        ClientReferenceBean clientReferenceBean = new ClientReferenceBean(sinkBean.getReference(), sinkBean.getClient().getName(), sinkBean.getFileName(), profilePreference);
-        clientDao.delete(clientReferenceBean);
+        //ClientReferenceBean clientReferenceBean = new ClientReferenceBean(sinkBean.getReference(), sinkBean.getClient().getName(), sinkBean.getFileName(), profilePreference);
+        clientDao.deleteByFileName(sinkBean.getFileName());
         clientDao.close();
     }
     private void runDeleteTask(final SinkBean sinkBean) {

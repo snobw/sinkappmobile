@@ -16,6 +16,7 @@
     <string name="galery.default.message">Galeria</string>
     <string name="photo.choice.default.message">Seleccionar desde</string>
     <string name="reference.default.message">Referencia</string>
+    <string name="type.search.data.message">Typo de busqueda</string>
     <string name="date.start.message">Desde</string>
     <string name="date.start.error.message">Debe seleccionar la fecha desde la que quiere consultar</string>
     <string name="date.end.message">Hasta</string>
@@ -56,6 +57,7 @@
     <string name="alert.default.message">Alerte</string>
     <string name="required.fields.empty.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
     <string name="success.save.message">Los datos han sido guardados exitosamente</string>
+    <string name="double.exists.save.message">Algunos datos no han sido guardados. La referencia ya existe!</string>
     <string name="reference.exists.save.message">La referencia ya existe. Esta seguro que quiere actualizarla ?</string>
     <string name="reference.exists.message">La referencia ya existe. Esta seguro que quiere actualizarla ?</string>
     <string name="reference.exists.error.message">La referencia ya existe. Debe crear una nueva!</string>
@@ -65,5 +67,7 @@
     <string name="address.gps.error.message">Un error se produjo y no es posible obtener la direccion</string>
     <string name="success.send.message">Todos los campos obligatorios no estan llenos o no tienen el formato adecuado</string>
     <string name="empty.list.send.message">Debe seleccionar al menos una linea de la lista</string>
+    <string name="no.network.available.message">Ninguna conexion a internet esta disponible. Intente mas tarde!</string>
+    <string name="type.search.error.message">Debe escoger un valor de typo de busqueda</string>
 
 </resources>

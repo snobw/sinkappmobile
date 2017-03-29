@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.adapters.SinkBeanSendAdapter;
+import com.inopek.duvana.sink.beans.ClientBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.beans.UserBean;
 import com.inopek.duvana.sink.injectors.Injector;
@@ -20,6 +21,7 @@ import com.inopek.duvana.sink.tasks.HttpRequestSendFileTask;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +42,7 @@ public class SinkSendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sink_send);
         // inject dependecies
         Injector.getInstance().getAppComponent().inject(this);
-        populate();
+        populate(null);
         addCheckBoxListener();
         addSendListener();
     }
@@ -51,7 +53,9 @@ public class SinkSendActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Set<SinkBean> sinks = adapter.getSinks();
-                if (CollectionUtils.isEmpty(sinks)) {
+                if(!ActivityUtils.isNetworkAvailable(getBaseContext())) {
+                    showToastMessage(getString(R.string.no_network_available_message), getBaseContext());
+                } else if (CollectionUtils.isEmpty(sinks)) {
                     showToastMessage(getString(R.string.empty_list_send_message), getBaseContext());
                 } else {
                     //send report
@@ -72,14 +76,13 @@ public class SinkSendActivity extends AppCompatActivity {
                 ProgressDialog dialog;
 
                 @Override
-                protected void onPostExecute(List<String> fileNames) {
+                protected void onPostExecute(HashMap<String, Boolean> fileNamesMap) {
                     dialog.dismiss();
-                    if (CollectionUtils.isEmpty(fileNames)) {
+                    if (CollectionUtils.isEmpty(fileNamesMap)) {
                         showToastMessage(getString(R.string.try_later_message), getBaseContext());
                     } else {
-                        showToastMessage(getString(R.string.success_save_message), getBaseContext());
-                        customService.deleteFiles(fileNames);
-                        populate();
+                        customService.deleteFiles(fileNamesMap, getBaseContext());
+                        populate(fileNamesMap);
                     }
                 }
 
@@ -115,11 +118,13 @@ public class SinkSendActivity extends AppCompatActivity {
         });
     }
 
-    private void populate() {
+    private void populate(HashMap<String, Boolean> fileNamesMap) {
         // Construct the data source
-        ArrayList<SinkBean> sinks = customService.getAllSinksToSend(getBaseContext());
+        String profile = ActivityUtils.getCurrentUserProfile(this);
+        ClientBean client = ActivityUtils.getCurrentClient(this);
+        ArrayList<SinkBean> sinks = customService.getAllSinksToSend(getBaseContext(), client, profile);
         // Create the adapter to convert the array to views
-        adapter = new SinkBeanSendAdapter(this, sinks, R.layout.item_sink);
+        adapter = new SinkBeanSendAdapter(this, sinks, R.layout.item_sink, fileNamesMap);
         // Attach the adapter to a ListView
         ListView listView = (ListView) findViewById(R.id.sinksListView);
         listView.setAdapter(adapter);

@@ -2,17 +2,23 @@ package com.inopek.duvana.sink.tasks;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
+import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.beans.UserBean;
+import com.inopek.duvana.sink.enums.ProfileEnum;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class HttpRequestSendFileTask extends AbstractHttpRequestTask<List<String>> {
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
+public class HttpRequestSendFileTask extends AbstractHttpRequestTask<HashMap<String, Boolean>> {
 
     private static final String REQUEST_NAME = "/saveFromFile/";
 
@@ -24,8 +30,13 @@ public class HttpRequestSendFileTask extends AbstractHttpRequestTask<List<String
     }
 
     @Override
-    protected List<String> post(RestTemplate restTemplate, String url, Map<String, String> mapVariables) {
-        return restTemplate.postForObject(url, sinks, List.class, mapVariables);
+    protected HashMap<String, Boolean> post(RestTemplate restTemplate, String url, Map<String, String> mapVariables) {
+
+        SharedPreferences sharedPref = getDefaultSharedPreferences(context);
+        String profile = sharedPref.getString(context.getString(R.string.profile_name_preference), context.getString(R.string.profile_name_preference));
+        url += "/{profile}";
+        mapVariables.put("profile", profile);
+        return restTemplate.postForObject(url, sinks, HashMap.class, mapVariables);
     }
 
     @Override

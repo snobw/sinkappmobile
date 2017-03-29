@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +27,10 @@ import com.inopek.duvana.sink.tasks.HttpRequestSearchPairReferenceClientTask;
 import com.inopek.duvana.sink.tasks.HttpRequestSendBeanTask;
 import com.inopek.duvana.sink.utils.ImageUtils;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -105,9 +109,6 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
                         createAlertReferenceDialog();
                     } else if (createFile){
                         createFileWithSinkData(sinkBean);
-                    } else {
-                        // send
-                        // TODO validate or delete this block
                     }
                 }
 
@@ -246,10 +247,19 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
     }
 
     private void addReferenceAndClientToDb(SinkBean sinkBean) {
-        ReferenceClientDao clientDao = new ReferenceClientDao(this);
+        ReferenceClientDao clientDao = new ReferenceClientDao(getBaseContext());
         clientDao.open();
         ClientReferenceBean clientReferenceBean = new ClientReferenceBean(sinkBean.getReference(), sinkBean.getClient().getName(), sinkBean.getFileName(), profilePreference);
-        clientDao.add(clientReferenceBean);
+        if(isModeEdition()) {
+            List<ClientReferenceBean> results = clientDao.getByFileName(sinkBean.getFileName());
+            if(CollectionUtils.isNotEmpty(results) && CollectionUtils.size(results) == 1) {
+                clientDao.update(clientReferenceBean);
+            } else {
+                Log.e("AbsCreationActivity", "It exists many entries with same file name! Weird!");
+            }
+        } else {
+            clientDao.add(clientReferenceBean);
+        }
         clientDao.close();
     }
 

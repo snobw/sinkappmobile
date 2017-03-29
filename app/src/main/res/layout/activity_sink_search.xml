@@ -49,6 +49,25 @@
             android:focusableInTouchMode="false"
             android:textAllCaps="false"/>
 
+        <TextView
+            android:id="@+id/searchTypeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/type.search.data.message"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
+
+        <EditText
+            android:id="@+id/searchType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:clickable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textAllCaps="false"/>
+
         <Button
             android:id="@+id/searchButton"
             android:layout_width="match_parent"

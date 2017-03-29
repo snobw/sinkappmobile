@@ -1,5 +1,6 @@
 package com.inopek.duvana.sink.activities;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Date;
 
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.showToastMessage;
+
 
 public class SinkEditionActivity extends AbstractInputActivity {
 
@@ -30,11 +33,14 @@ public class SinkEditionActivity extends AbstractInputActivity {
 
     @Override
     protected void addSendListenerAction() {
-        if (createSinkBean(sinkBean)) {
+        Context context = getBaseContext();
+        if (!ActivityUtils.isNetworkAvailable(context)) {
+            showToastMessage(getString(R.string.no_network_available_message), context);
+        } else if (createSinkBean(sinkBean)) {
             runTask(sinkBean, false, true);
         } else {
             // Message d'error
-            ActivityUtils.showToastMessage(getString(R.string.required_fields_empty_message), getBaseContext());
+            ActivityUtils.showToastMessage(getString(R.string.required_fields_empty_message), context);
         }
     }
 

@@ -8,13 +8,19 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.inopek.duvana.sink.R;
+import com.inopek.duvana.sink.beans.ClientBean;
+import com.inopek.duvana.sink.beans.ClientReferenceBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
+import com.inopek.duvana.sink.dao.ReferenceClientDao;
 import com.inopek.duvana.sink.services.CustomService;
 import com.inopek.duvana.sink.services.CustomServiceUtils;
 import com.inopek.duvana.sink.utils.PropertiesUtils;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.joda.time.DateTime;
 
@@ -28,7 +34,9 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.inopek.duvana.sink.constants.SinkConstants.DATE_FORMAT_YYYT_MM_DD;
@@ -80,24 +88,32 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
-    public void deleteFiles(List<String> fileNames) {
-        for(String fileName : fileNames) {
-            File file = new File(fileName);
-            file.delete();
+    public void deleteFiles(HashMap<String, Boolean> fileNamesMap, Context context) {
+        for (Map.Entry<String, Boolean> entry : fileNamesMap.entrySet()) {
+            if(BooleanUtils.isTrue(entry.getValue())) {
+                // delete file
+                String fileName = entry.getKey();
+                File file = new File(fileName);
+                file.delete();
+                // and delete entry from database
+
+                ReferenceClientDao dao = new ReferenceClientDao(context);
+                dao.open();
+                dao.deleteByFileName(fileName);
+                dao.close();
+            }
         }
     }
 
     @Override
-    public ArrayList<SinkBean> getAllSinksToSend(Context context) {
+    public ArrayList<SinkBean> getAllSinksToSend(Context context, ClientBean client, String profile) {
         ArrayList<SinkBean> sinkBeans = new ArrayList<>();
+        ReferenceClientDao dao = new ReferenceClientDao(context);
+        dao.open();
+        List<ClientReferenceBean> results = dao.getByClientNameAndProfile(client.getName(), profile);
+        dao.close();
         try {
-            File del = new File(Environment.getExternalStorageDirectory() + PropertiesUtils.getProperty("duvana.app.cache.path.images", context));
-            del.delete();
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
-            File directory = new File(path);
-            File[] files = directory.listFiles();
-            createSinkBeansFromFile(sinkBeans, files);
-
+            createSinkBeansFromFile(sinkBeans, results);
         } catch (IOException ex) {
             Log.e("CustomServiceImpl", "Error while reading file " + ex.getMessage());
         }
@@ -105,25 +121,14 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
-    public ArrayList<SinkBean> getAllSinksSaved(final Context context, final Date startDate, final Date endDate) {
+    public ArrayList<SinkBean> getAllSinksSavedByDate(final Context context, ClientBean client, String profile, Date startDate, Date endDate) {
         ArrayList<SinkBean> sinkBeans = new ArrayList<>();
+        ReferenceClientDao dao = new ReferenceClientDao(context);
+        dao.open();
+        List<ClientReferenceBean> results = dao.getByClientNameAndProfileByDate(client.getName(), profile, startDate, endDate);
+        dao.close();
         try {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + PropertiesUtils.getProperty("duvana.app.cache.path", context);
-            File directory = new File(path);
-            FileFilter filter = new FileFilter() {
-                public boolean accept(File file) {
-                    if (!file.isFile()) {
-                        return false;
-                    }
-                    DateTime fileDate = new DateTime(file.lastModified()).withTimeAtStartOfDay();
-                    if ((fileDate.isAfter(startDate.getTime()) || fileDate.isEqual(startDate.getTime())) && (fileDate.isBefore(endDate.getTime()) || fileDate.isEqual(endDate.getTime()))) {
-                        return true;
-                    }
-                    return false;
-                }
-            };
-            File[] myFiles = directory.listFiles(filter);
-            createSinkBeansFromFile(sinkBeans, myFiles);
+            createSinkBeansFromFile(sinkBeans, results);
         } catch (IOException ex) {
             Log.e("CustomServiceImpl", "Error while reading file " + ex.getMessage());
         }
@@ -143,19 +148,22 @@ public class CustomServiceImpl implements CustomService {
         }
     }
 
-    private void createSinkBeansFromFile(ArrayList<SinkBean> sinkBeans, File[] files) throws IOException {
+    private void createSinkBeansFromFile(ArrayList<SinkBean> sinkBeans, List<ClientReferenceBean> clientReferences) throws IOException {
         Reader reader;
-        if (ArrayUtils.isNotEmpty(files)) {
-            for (File file : files) {
-                reader = new FileReader(file);
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
-                if (sinkBean != null) {
-                    sinkBean.setFileName(file.getAbsolutePath());
-                    sinkBeans.add(sinkBean);
+        if (CollectionUtils.isNotEmpty(clientReferences)) {
+            for (ClientReferenceBean clientReference : clientReferences) {
+                File file = new File(clientReference.getFileName());
+                if(file.isFile()) {
+                    reader = new FileReader(file);
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    SinkBean sinkBean = gson.fromJson(reader, SinkBean.class);
+                    if (sinkBean != null) {
+                        sinkBean.setFileName(file.getAbsolutePath());
+                        sinkBeans.add(sinkBean);
+                    }
+                    reader.close();
                 }
-                reader.close();
             }
         }
     }

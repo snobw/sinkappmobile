@@ -9,6 +9,7 @@ public class ClientReferenceBean implements Serializable {
     private String clientName;
     private String fileName;
     private String profileName;
+    private Long timestamp;
 
     public ClientReferenceBean() {
     }
@@ -58,5 +59,13 @@ public class ClientReferenceBean implements Serializable {
 
     public void setProfileName(String profileName) {
         this.profileName = profileName;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 }

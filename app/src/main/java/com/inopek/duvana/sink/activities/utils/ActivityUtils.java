@@ -19,6 +19,7 @@ import com.inopek.duvana.sink.adapters.SpinnerArrayAdapter;
 import com.inopek.duvana.sink.beans.ClientBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.beans.UserBean;
+import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.enums.SinkDiameterEnum;
 import com.inopek.duvana.sink.enums.SinkPlumbOptionEnum;
 import com.inopek.duvana.sink.enums.SinkStatusEnum;
@@ -43,6 +44,11 @@ public final class ActivityUtils {
 
     public static void showToastMessage(String message, Context context) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    public static void showToastMessageLong(String message, Context context) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG)
                 .show();
     }
 
@@ -92,9 +98,18 @@ public final class ActivityUtils {
         sinkBean.setClient(clientBean);
     }
 
+    public static ClientBean getCurrentClient(final Activity activity) {
+        String clientName = ActivityUtils.getStringPreference(activity, R.string.client_name_preference, activity.getString(R.string.client_name_preference));
+        return new ClientBean(clientName);
+    }
+
     public static UserBean getCurrentUser(final Activity activity) {
         String imeNumber = ActivityUtils.getStringPreference(activity, R.string.imei_name_preference, activity.getString(R.string.imei_name_preference));
         return new UserBean(imeNumber);
+    }
+
+    public static String getCurrentUserProfile(final Activity activity) {
+        return ActivityUtils.getStringPreference(activity, R.string.profile_name_preference, activity.getString(R.string.profile_name_preference));
     }
 
     public static boolean isNumeric(EditText editText, EditText errorTxt) {
