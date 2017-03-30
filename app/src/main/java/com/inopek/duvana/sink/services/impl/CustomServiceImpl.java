@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.beans.ClientBean;
 import com.inopek.duvana.sink.beans.ClientReferenceBean;
 import com.inopek.duvana.sink.beans.SinkBean;
@@ -19,14 +18,11 @@ import com.inopek.duvana.sink.services.CustomServiceUtils;
 import com.inopek.duvana.sink.utils.PropertiesUtils;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.joda.time.DateTime;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -121,11 +117,11 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
-    public ArrayList<SinkBean> getAllSinksSavedByDate(final Context context, ClientBean client, String profile, Date startDate, Date endDate) {
+    public ArrayList<SinkBean> getAllSinksSavedByDateAndReference(final Context context, ClientBean client, String profile, Date startDate, Date endDate, String reference) {
         ArrayList<SinkBean> sinkBeans = new ArrayList<>();
         ReferenceClientDao dao = new ReferenceClientDao(context);
         dao.open();
-        List<ClientReferenceBean> results = dao.getByClientNameAndProfileByDate(client.getName(), profile, startDate, endDate);
+        List<ClientReferenceBean> results = dao.getByClientNameAndProfileByDateAndReferene(client.getName(), profile, startDate, endDate, reference);
         dao.close();
         try {
             createSinkBeansFromFile(sinkBeans, results);

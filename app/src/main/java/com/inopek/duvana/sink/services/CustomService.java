@@ -48,7 +48,7 @@ public interface CustomService {
     /**
      * @return
      */
-    ArrayList<SinkBean> getAllSinksSavedByDate(Context context, ClientBean client, String profile, Date startDate, Date endDate);
+    ArrayList<SinkBean> getAllSinksSavedByDateAndReference(Context context, ClientBean client, String profile, Date startDate, Date endDate, String reference);
 
     /**
      *

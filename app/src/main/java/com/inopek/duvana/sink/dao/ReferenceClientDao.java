@@ -7,6 +7,7 @@ import android.database.Cursor;
 import com.inopek.duvana.sink.beans.ClientReferenceBean;
 import com.inopek.duvana.sink.handler.ReferenceClientHandler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -76,10 +77,13 @@ public class ReferenceClientDao extends AbstractDao<ReferenceClientHandler> {
         return executeQueryAndCreateResultList(resultats, query);
     }
 
-    public List<ClientReferenceBean> getByClientNameAndProfileByDate(String clientName, String profileName, Date startDate, Date endDate) {
+    public List<ClientReferenceBean> getByClientNameAndProfileByDateAndReferene(String clientName, String profileName, Date startDate, Date endDate, String reference) {
         List<ClientReferenceBean> resultats = new ArrayList<>();
         String query = ReferenceClientHandler.COLUMN_CLIENT_NAME + " = \"" + clientName + "\"" + " AND " + ReferenceClientHandler.COLUMN_PROFILE_NAME + " = \"" + profileName + "\"";
         query += " AND " + ReferenceClientHandler.COLUMN_DATE_NAME + " BETWEEN " + startDate.getTime() + " AND " + endDate.getTime() + "";
+        if (StringUtils.isNotEmpty(reference)) {
+            query += " AND " + ReferenceClientHandler.COLUMN_REFERENCE + " = " + reference + "";
+        }
         return executeQueryAndCreateResultList(resultats, query);
     }
 

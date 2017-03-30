@@ -1,7 +1,6 @@
 package com.inopek.duvana.sink.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,26 +8,19 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.inopek.duvana.sink.R;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.adapters.SinkBeanEditionAdapter;
-import com.inopek.duvana.sink.adapters.SpinnerArrayAdapter;
 import com.inopek.duvana.sink.beans.ClientBean;
 import com.inopek.duvana.sink.beans.SinkBean;
 import com.inopek.duvana.sink.constants.SinkConstants;
-import com.inopek.duvana.sink.enums.ProfileEnum;
 import com.inopek.duvana.sink.enums.SearchTypeEnum;
-import com.inopek.duvana.sink.enums.SinkTypeEnum;
 import com.inopek.duvana.sink.fragment.DatePickerFragment;
 import com.inopek.duvana.sink.injectors.Injector;
 import com.inopek.duvana.sink.services.CustomService;
@@ -36,7 +28,6 @@ import com.inopek.duvana.sink.tasks.HttpRequestSearchSinkTask;
 import com.inopek.duvana.sink.utils.DateUtils;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
@@ -66,8 +57,32 @@ public class SinkSearchActivity extends AppCompatActivity {
         initDatesAndDatesListeners();
         initTypeSearch();
         addSearchListener();
+        addExpandListener();
+        addCollapseListener();
         // Clean temp file images
         cleanImagesFiles();
+    }
+
+    private void addCollapseListener() {
+        getCollapseButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getExpandButton().setVisibility(View.VISIBLE);
+                getCollapseButton().setVisibility(View.GONE);
+                getSearchArea().setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void addExpandListener() {
+        getExpandButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getExpandButton().setVisibility(View.GONE);
+                getCollapseButton().setVisibility(View.VISIBLE);
+                getSearchArea().setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void initTypeSearch() {
@@ -141,6 +156,7 @@ public class SinkSearchActivity extends AppCompatActivity {
     private void launchSearch() {
         // check search type
         EditText startDateEditText = (EditText) findViewById(R.id.dateStartButton);
+        EditText reference = (EditText) findViewById(R.id.referenceSearch);
         String startDateStr = startDateEditText.getText().toString();
         String typeSearch = getTypeSearchEditText().getText().toString();
 
@@ -152,25 +168,24 @@ public class SinkSearchActivity extends AppCompatActivity {
             EditText endDateEditText = (EditText) findViewById(R.id.dateEndButton);
             String endDateStr = endDateEditText.getText().toString();
 
-            List<SinkBean> sinksFound = new ArrayList<>();
             if(SearchTypeEnum.LOCAL.getLabel().equals(typeSearch)) {
-                findLocalSinks(startDateStr, endDateStr, sinksFound);
+                List<SinkBean> sinksFound = findLocalSinks(startDateStr, endDateStr, reference.getText().toString());
                 populate(sinksFound);
                 if(CollectionUtils.isEmpty(sinksFound)) {
                     showToastMessage(getString(R.string.search_try_later_message), getBaseContext());
                 }
             } else if(ActivityUtils.isNetworkAvailable(getBaseContext())){
                 // then lauch search distant
-                runSearchTask(startDateStr, endDateStr);
+                runSearchTask(startDateStr, endDateStr, reference.getText().toString());
             } else {
                 showToastMessage(getString(R.string.no_network_available_message), getBaseContext());
             }
         }
     }
 
-    private void runSearchTask(final String startDate, final String endDate) {
+    private void runSearchTask(final String startDate, final String endDate, final String reference) {
 
-        new HttpRequestSearchSinkTask(startDate, endDate, getBaseContext()) {
+        new HttpRequestSearchSinkTask(startDate, endDate, reference, getBaseContext()) {
 
             ProgressDialog dialog;
 
@@ -194,7 +209,8 @@ public class SinkSearchActivity extends AppCompatActivity {
 
     }
 
-    private void findLocalSinks(String startDateStr, String endDateStr, List<SinkBean> sinksFound) {
+    private ArrayList<SinkBean> findLocalSinks(String startDateStr, String endDateStr, String reference) {
+
         Date startDate = DateUtils.parseDateFromString(startDateStr, SinkConstants.DATE_FORMAT_DD_MM_YYYY);
         Date endDate = new DateTime().withTimeAtStartOfDay().toDate();
         if(endDateStr == null) {
@@ -202,8 +218,7 @@ public class SinkSearchActivity extends AppCompatActivity {
         }
         String profile = ActivityUtils.getCurrentUserProfile(this);
         ClientBean client = ActivityUtils.getCurrentClient(this);
-        ArrayList<SinkBean> allSinksSaved = customService.getAllSinksSavedByDate(getBaseContext(), client, profile, startDate, endDate);
-        sinksFound.addAll(allSinksSaved);
+        return customService.getAllSinksSavedByDateAndReference(getBaseContext(), client, profile, startDate, endDate, reference);
     }
 
     private void populate(List<SinkBean> sinks) {
@@ -212,6 +227,11 @@ public class SinkSearchActivity extends AppCompatActivity {
         adapter = new SinkBeanEditionAdapter(getBaseContext(), results, R.layout.item_edit_sink, this);
         ListView listView = (ListView) findViewById(R.id.sinksListView);
         listView.setAdapter(adapter);
+        if(CollectionUtils.isNotEmpty(results)) {
+            getExpandButton().setVisibility(View.VISIBLE);
+            getCollapseButton().setVisibility(View.GONE);
+            getSearchArea().setVisibility(View.GONE);
+        }
     }
 
     private ProgressDialog createDialog() {
@@ -255,5 +275,17 @@ public class SinkSearchActivity extends AppCompatActivity {
 
     private EditText getTypeSearchEditText() {
         return  (EditText) findViewById(R.id.searchType);
+    }
+
+    private Button getExpandButton() {
+        return (Button) findViewById(R.id.expandButton);
+    }
+
+    private Button getCollapseButton() {
+        return (Button) findViewById(R.id.collapseButton);
+    }
+
+    private LinearLayout getSearchArea() {
+        return (LinearLayout) findViewById(R.id.searchArea);
     }
 }

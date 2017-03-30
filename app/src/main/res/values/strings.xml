@@ -33,6 +33,8 @@
     <string name="state.default.message">Estado del sumidero</string>
     <string name="before.default.message">Foto antes</string>
     <string name="after.default.message">Foto después</string>
+    <string name="expand.default.message">Mostrar los criterios de busqueda...</string>
+    <string name="collapse.default.message">Esconder los criterios de busqueda...</string>
     <string name="state.good.default.message">Bueno</string>
     <string name="state.bad.default.message">Malo</string>
     <string name="state.moderate.default.message">Regular</string>

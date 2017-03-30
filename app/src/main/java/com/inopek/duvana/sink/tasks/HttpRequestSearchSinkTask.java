@@ -22,16 +22,18 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class HttpRequestSearchSinkTask extends AsyncTask<Object, Object, SinkBean[]> {
 
-    private static final String REQUEST_NAME = "/search/{startDate}/{endDate}/{clientName}";
+    private static final String REQUEST_NAME = "/search/{startDate}/{endDate}/{clientName}/{reference}";
 
     private String startDate;
     private String endDate;
+    private String reference;
     private Context context;
 
-    public HttpRequestSearchSinkTask(String startDate, String endDate, Context context) {
+    public HttpRequestSearchSinkTask(String startDate, String endDate, String reference, Context context) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.context = context;
+        this.reference = reference;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class HttpRequestSearchSinkTask extends AsyncTask<Object, Object, SinkBea
             mapVariables.put("startDate", startDate.replaceAll("/", "-"));
             mapVariables.put("endDate", endDate.replaceAll("/", "-"));
             mapVariables.put("clientName", clientName);
+            mapVariables.put("reference", reference);
             ((SimpleClientHttpRequestFactory) restTemplate.getRequestFactory()).setConnectTimeout(SinkConstants.CONNECT_TIMEOUT);
             return restTemplate.getForObject(url, SinkBean[].class, mapVariables);
         } catch (Exception e) {

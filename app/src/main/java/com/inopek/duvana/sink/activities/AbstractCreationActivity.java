@@ -253,6 +253,7 @@ public abstract class AbstractCreationActivity extends AppCompatActivity {
         if(isModeEdition()) {
             List<ClientReferenceBean> results = clientDao.getByFileName(sinkBean.getFileName());
             if(CollectionUtils.isNotEmpty(results) && CollectionUtils.size(results) == 1) {
+                clientReferenceBean.setId(results.get(0).getId());
                 clientDao.update(clientReferenceBean);
             } else {
                 Log.e("AbsCreationActivity", "It exists many entries with same file name! Weird!");

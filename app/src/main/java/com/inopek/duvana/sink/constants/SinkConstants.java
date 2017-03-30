@@ -17,7 +17,7 @@ public final class SinkConstants {
     public static final int EDITION_ACTIVITY_RESULT_CODE = 200;
     public static final int CONNECT_TIMEOUT = 30000;
     public static final String HTTP_PREFIX = "http://";
-    public static final String ADDRESS_HOST = "duvana.server.host.address";
+    public static final String ADDRESS_HOST = "duvana.server.host.address.distant";
     public static final String PORT_HOST = "duvana.server.host.port";
 
 }

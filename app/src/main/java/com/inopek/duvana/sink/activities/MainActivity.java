@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         checkCamera();
         askForPermission();
         endActivity();
-        deleteDatabase("database.db");
     }
 
     private void askForPermission() {
