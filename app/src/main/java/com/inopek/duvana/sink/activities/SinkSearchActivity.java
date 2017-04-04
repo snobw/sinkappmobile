@@ -61,6 +61,16 @@ public class SinkSearchActivity extends AppCompatActivity {
         addCollapseListener();
         // Clean temp file images
         cleanImagesFiles();
+        // look for extras
+        if(getIntent() != null && getIntent().getExtras() != null) {
+            Bundle extras = getIntent().getExtras();
+            Object reference = extras.get("reference");
+            if(reference != null) {
+                EditText referenceEditText = (EditText) findViewById(R.id.referenceSearch);
+                referenceEditText.setText(String.valueOf(reference));
+            }
+        }
+
     }
 
     private void addCollapseListener() {

@@ -74,6 +74,7 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
         initPlumbSpinner(getPlumbSpinner(), context);
         initLocationRequest();
         addSpinnerTypeListener();
+        addSpinnerPlumbOptionListener();
         String extra = getIntent().getStringExtra("sinkBean");
         if (extra != null) {
             populateFromExtras(extra);
@@ -86,6 +87,21 @@ public abstract class AbstractInputActivity extends AbstractCreationActivity imp
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String typeSelected = getTypeSpinner().getSelectedItem().toString();
                 getLengthEditText().setEnabled(!SinkTypeEnum.COVENTIONAL.getLabel().equals(typeSelected));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void addSpinnerPlumbOptionListener() {
+        getPlumbSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String optionSelected = getPlumbSpinner().getSelectedItem().toString();
+                getPipelineLengthEditText().setEnabled(!SinkPlumbOptionEnum.NO.getLabel().equals(optionSelected));
             }
 
             @Override

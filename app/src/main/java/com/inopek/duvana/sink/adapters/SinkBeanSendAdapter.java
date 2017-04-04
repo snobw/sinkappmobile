@@ -1,6 +1,8 @@
 package com.inopek.duvana.sink.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatCheckBox;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.inopek.duvana.sink.R;
+import com.inopek.duvana.sink.activities.SinkSearchActivity;
 import com.inopek.duvana.sink.activities.utils.ActivityUtils;
 import com.inopek.duvana.sink.beans.SinkBean;
 
@@ -37,16 +40,20 @@ public class SinkBeanSendAdapter extends AbstractSinkBeanAdapter {
 
     private HashMap<String, Boolean> fileNamesMap;
 
-    int resource;
+    private int resource;
+
+    private Context context;
 
     public SinkBeanSendAdapter(Context context, ArrayList<SinkBean> sinks, int resource) {
         super(context, sinks);
         this.resource = resource;
+        this.context = context;
     }
 
     public SinkBeanSendAdapter(Context context, ArrayList<SinkBean> sinks, int resource, HashMap<String, Boolean> fileNamesMap) {
         super(context, sinks);
         this.resource = resource;
+        this.context = context;
         this.fileNamesMap = fileNamesMap;
     }
 
@@ -56,7 +63,7 @@ public class SinkBeanSendAdapter extends AbstractSinkBeanAdapter {
     }
 
     @Override
-    protected void populateCustomView(View convertView, SinkBean sinkBean) {
+    protected void populateCustomView(View convertView, final SinkBean sinkBean) {
         TextView dateTv = (TextView) convertView.findViewById(R.id.dateTextView);
         CheckBox itemCheckBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox);
         itemCheckBox.setTag(sinkBean);
@@ -68,7 +75,17 @@ public class SinkBeanSendAdapter extends AbstractSinkBeanAdapter {
         if (fileNamesMap != null && !fileNamesMap.isEmpty() && fileNamesMap.get(sinkBean.getFileName()) != null && sinkBean.getReference().equals(referenceTv.getText().toString())) {
             referenceTv.setTextColor(ContextCompat.getColor(getContext(), R.color.colorError));
             referenceTv.setError(getContext().getString(R.string.reference_exists_save_message));
-            ActivityUtils.showToastMessageLong(getContext().getString(R.string.double_exists_save_message), getContext());
+            referenceTv.setClickable(true);
+            referenceTv.setFocusableInTouchMode(true);
+            referenceTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), SinkSearchActivity.class);
+                    intent.putExtra("reference", sinkBean.getReference());
+                    context.startActivity(intent);
+                }
+            });
+            ActivityUtils.showToastMessage(getContext().getString(R.string.double_exists_save_message), getContext());
         }
     }
 
