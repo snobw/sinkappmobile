@@ -6,19 +6,22 @@ import java.util.Date;
 public class SinkBean {
 
     private Long id;
-    private Long sinkStatutId;
+    private Long sinkStatusId;
     private Long sinkTypeId;
-    private Long lenght;
+    private Long length;
     private Long pipeLineDiameterId;
-    private Long pipeLineLenght;
+    private Long pipeLineLength;
     private Long plumbOptionId;
     private String reference;
     private String imageBefore;
     private String imageAfter;
     private String observations;
+    private String fileName;
 
-    private AddressBean adresse;
+    private AddressBean address;
     private ClientBean client;
+    private UserBean userCreation;
+    private UserBean userUpdate;
     private Date sinkCreationDate;
     private Date sinkUpdateDate;
 
@@ -54,12 +57,12 @@ public class SinkBean {
         this.imageAfter = imageAfter;
     }
 
-    public Long getSinkStatutId() {
-        return sinkStatutId;
+    public Long getSinkStatusId() {
+        return sinkStatusId;
     }
 
-    public void setSinkStatutId(Long sinkStatutId) {
-        this.sinkStatutId = sinkStatutId;
+    public void setSinkStatusId(Long sinkStatusId) {
+        this.sinkStatusId = sinkStatusId;
     }
 
     public Long getSinkTypeId() {
@@ -70,12 +73,12 @@ public class SinkBean {
         this.sinkTypeId = sinkTypeId;
     }
 
-    public AddressBean getAdresse() {
-        return adresse;
+    public AddressBean getAddress() {
+        return address;
     }
 
-    public void setAdresse(AddressBean adresse) {
-        this.adresse = adresse;
+    public void setAddress(AddressBean address) {
+        this.address = address;
     }
 
     public Date getSinkCreationDate() {
@@ -94,12 +97,12 @@ public class SinkBean {
         this.sinkUpdateDate = sinkUpdateDate;
     }
 
-    public Long getLenght() {
-        return lenght;
+    public Long getLength() {
+        return length;
     }
 
-    public void setLenght(Long lenght) {
-        this.lenght = lenght;
+    public void setLength(Long length) {
+        this.length = length;
     }
 
     public Long getPipeLineDiameterId() {
@@ -110,12 +113,12 @@ public class SinkBean {
         this.pipeLineDiameterId = pipeLineDiameterId;
     }
 
-    public Long getPipeLineLenght() {
-        return pipeLineLenght;
+    public Long getPipeLineLength() {
+        return pipeLineLength;
     }
 
-    public void setPipeLineLenght(Long pipeLineLenght) {
-        this.pipeLineLenght = pipeLineLenght;
+    public void setPipeLineLength(Long pipeLineLength) {
+        this.pipeLineLength = pipeLineLength;
     }
 
     public String getObservations() {
@@ -140,6 +143,30 @@ public class SinkBean {
 
     public void setClient(ClientBean client) {
         this.client = client;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public UserBean getUserCreation() {
+        return userCreation;
+    }
+
+    public void setUserCreation(UserBean userCreation) {
+        this.userCreation = userCreation;
+    }
+
+    public UserBean getUserUpdate() {
+        return userUpdate;
+    }
+
+    public void setUserUpdate(UserBean userUpdate) {
+        this.userUpdate = userUpdate;
     }
 
     @Override

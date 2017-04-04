@@ -9,6 +9,12 @@
         <item name="colorAccent">#e66c10</item>
     </style>
 
+    <style name="Datepicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">#e66c10</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">#e66c10</item>
+    </style>
+
     <style name="AppTheme.Dialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
         <!-- removing the dialog's action bar -->
         <item name="windowActionBar">false</item>
@@ -27,6 +33,11 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="spinner.style" parent="Platform.Widget.AppCompat.Spinner">
+        <item name="android:textColor">@color/spinnerTextColor</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
 </resources>

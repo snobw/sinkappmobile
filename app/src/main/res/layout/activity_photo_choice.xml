@@ -35,7 +35,7 @@
                 android:layout_marginBottom="20px"
                 android:layout_marginTop="20px"
                 android:fontFamily="sans-serif"
-                android:text="@string/camera.default.message"
+                android:text="@string/choice.image.default.message"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"

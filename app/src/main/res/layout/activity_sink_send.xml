@@ -49,27 +49,20 @@
             </TableRow>
         </TableLayout>
 
+
         <ListView
             android:id="@+id/sinksListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/sendSinkButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:layoutDirection="inherit"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/sendSinkButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@android:drawable/ic_menu_send"
-                android:text="@string/button.send.title"
-                android:textAllCaps="false" />
-
-        </LinearLayout>
+            android:drawableLeft="@android:drawable/ic_menu_send"
+            android:text="@string/button.send.title"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 

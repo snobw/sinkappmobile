@@ -3,6 +3,8 @@ package com.inopek.duvana.sink.utils;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
+import android.widget.ImageView;
 
 import com.inopek.duvana.sink.constants.SinkConstants;
 
@@ -95,5 +97,28 @@ public final class ImageUtils {
         }
 
         return inSampleSize;
+    }
+
+    public static void createBipMapFromFile(String path, ImageView imageView) {
+        File imageFile = new File(path);
+        if (imageFile.exists()) {
+            Bitmap bitmap = getBipMapFromFile(imageFile.getAbsolutePath());
+            if(bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+                imageView.setDrawingCacheEnabled(true);
+            } else {
+                Log.e("ImageUtils", "Error creating bitmap");
+            }
+        }
+    }
+
+    public static Bitmap getBipMapFromFile(String path) {
+        File imageFile = new File(path);
+        if (imageFile.exists()) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+        }
+        return null;
     }
 }

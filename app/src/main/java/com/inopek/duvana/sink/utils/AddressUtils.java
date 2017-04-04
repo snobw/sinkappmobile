@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import static com.inopek.duvana.sink.services.CustomServiceUtils.hasText;
+import static com.inopek.duvana.sink.activities.utils.ActivityUtils.hasText;
 import static com.inopek.duvana.sink.utils.PropertiesUtils.getProperty;
 
 public class AddressUtils {
@@ -45,10 +45,9 @@ public class AddressUtils {
         return addressBean;
     }
 
-    public static AddressBean initAddressBeanFromUI(Context context, EditText addressText, EditText neighborhoodText, String addressDefaultMessage, String neigborhoodDefaultMessage) {
-        AddressBean addressBean = new AddressBean();
-        boolean addressExists = hasText(addressText, addressDefaultMessage);
-        boolean neighborhoodExists = hasText(neighborhoodText, neigborhoodDefaultMessage);
+    public static void validateAddressFields(Context context, EditText addressText, EditText neighborhoodText, EditText addressTitleText, EditText neighborhoodTitleText, AddressBean addressBean) {
+        boolean addressExists = hasText(addressText, addressTitleText);
+        boolean neighborhoodExists = hasText(neighborhoodText, neighborhoodTitleText);
 
         if (addressExists && neighborhoodExists) {
             try {
@@ -59,8 +58,8 @@ public class AddressUtils {
             addressBean.setStreet(addressText.getText().toString());
             addressBean.setNeighborhood(neighborhoodText.getText().toString());
         }
-        return addressBean;
     }
+
 
     public static void initLocationRequest(LocationRequest mLocationRequest) {
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

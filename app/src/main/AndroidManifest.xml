@@ -3,12 +3,13 @@
     package="com.inopek.duvana.sink">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.location.gps" />
@@ -16,7 +17,7 @@
     <application
         android:name="com.inopek.duvana.sink.modules.SinkApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_sink"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -37,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.inopek.duvana.sink.activities.SinkBeforeCreationActivity"
+            android:name="com.inopek.duvana.sink.activities.SinkBasicCreationActivity"
             android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
@@ -49,7 +50,26 @@
             android:theme="@style/Theme.AppCompat.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.inopek.duvana.sink.activities.SettingsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.inopek.duvana.sink.activities.SinkSearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.inopek.duvana.sink.activities.SinkEditionActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.inopek.duvana.sink.activities.SinkBasicEditionActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.INSERT" />
             </intent-filter>
         </activity>
     </application>
